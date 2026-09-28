@@ -7,3 +7,16 @@ datasource db {
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
+
+model Lead {
+  id                  String   @id @default(cuid())
+  name                String
+  location            String
+  propertyRequirement String
+  budgetInr           Int
+  buyingTimeline      String
+  customerMessage     String
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
