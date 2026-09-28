@@ -2,8 +2,8 @@ export default function PhaseRoadmap() {
   const roadmapItems = [
     {
       title: 'Phase 1: Foundation & Infrastructure',
-      status: 'active',
-      badge: 'Current Phase',
+      status: 'completed',
+      badge: 'Verified ✓',
       items: [
         'Next.js 16 + React 19 + TypeScript',
         'PostgreSQL + Prisma ORM integration',
@@ -13,12 +13,13 @@ export default function PhaseRoadmap() {
     },
     {
       title: 'Phase 2: Lead Domain & Data Store',
-      status: 'upcoming',
-      badge: 'Next Up',
+      status: 'active',
+      badge: 'Current Phase',
       items: [
-        'Structured lead schema & intake',
-        'Lead CRUD & persistent database records',
-        'Timeline audit log & contact tracking',
+        'PostgreSQL Lead model & migration history',
+        'Shared Zod validation (intake & API routes)',
+        'Lead intake form with live INR budget preview',
+        'Scannable dashboard queue & lead detail view',
       ],
     },
     {
@@ -66,6 +67,8 @@ export default function PhaseRoadmap() {
             className={`p-4 rounded-lg border ${
               phase.status === 'active'
                 ? 'bg-zinc-950/80 border-emerald-800/40'
+                : phase.status === 'completed'
+                ? 'bg-zinc-950/60 border-zinc-700/50'
                 : 'bg-zinc-950/40 border-zinc-800/60'
             }`}
           >
@@ -75,6 +78,8 @@ export default function PhaseRoadmap() {
                 className={`text-[11px] px-2 py-0.5 rounded font-mono font-medium ${
                   phase.status === 'active'
                     ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/50'
+                    : phase.status === 'completed'
+                    ? 'bg-zinc-800 text-zinc-300 border border-zinc-700/60'
                     : 'bg-zinc-800/80 text-zinc-400 border border-zinc-700/50'
                 }`}
               >
@@ -86,7 +91,11 @@ export default function PhaseRoadmap() {
                 <li key={item} className="flex items-start gap-2">
                   <span
                     className={`mt-1 h-1.5 w-1.5 rounded-full shrink-0 ${
-                      phase.status === 'active' ? 'bg-emerald-400' : 'bg-zinc-600'
+                      phase.status === 'active'
+                        ? 'bg-emerald-400'
+                        : phase.status === 'completed'
+                        ? 'bg-zinc-400'
+                        : 'bg-zinc-600'
                     }`}
                   />
                   <span>{item}</span>
