@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { prisma } from '@/lib/db';
 import { formatBudgetDisplay, getTimelineLabel } from '@/lib/validations/lead';
+import LeadAnalysisSection from '@/components/LeadAnalysisSection';
 
 export const dynamic = 'force-dynamic';
 
@@ -84,32 +85,26 @@ export default async function LeadDetailPage({ params }: PageProps) {
 
       {/* Main Content */}
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-8 space-y-6">
-        {/* Success Banner Placeholder (from Prompt instructions) */}
-        <div className="rounded-xl border border-emerald-900/60 bg-emerald-950/30 p-4 text-sm text-emerald-300 flex items-start justify-between gap-3">
-          <div className="flex items-start gap-2.5">
-            <span className="text-emerald-400 text-base mt-0.5">&check;</span>
-            <div>
-              <p className="font-medium text-emerald-200">Lead saved successfully.</p>
-              <p className="text-xs text-emerald-400/80 mt-0.5">
-                AI analysis and prioritization will be available in the next phase.
-              </p>
-            </div>
-          </div>
-          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-900/40 text-emerald-300 border border-emerald-700/40 shrink-0">
-            Database Record Persisted
-          </span>
-        </div>
-
         {/* Lead Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-800">
           <div>
-            <div className="flex items-center gap-2 mb-1.5">
+            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
               <span className="text-xs font-mono px-2 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-800">
                 ID: {lead.id}
               </span>
-              <span className="text-xs font-mono px-2 py-0.5 rounded bg-zinc-900 text-amber-400 border border-amber-900/40">
-                AI Analysis Pending
-              </span>
+              {lead.aiAnalysisStatus === 'COMPLETED' ? (
+                <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/40">
+                  AI Analyzed ({lead.leadScore ?? '--'}/100 &bull; {lead.leadPriority ?? 'COLD'})
+                </span>
+              ) : lead.aiAnalysisStatus === 'FAILED' ? (
+                <span className="text-xs font-mono px-2 py-0.5 rounded bg-rose-950/60 text-rose-400 border border-rose-800/40">
+                  AI Analysis Unavailable
+                </span>
+              ) : (
+                <span className="text-xs font-mono px-2 py-0.5 rounded bg-zinc-900 text-amber-400 border border-amber-900/40">
+                  AI Analysis Pending
+                </span>
+              )}
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
               {lead.name}
@@ -178,23 +173,25 @@ export default async function LeadDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Phase 3 Placeholder: AI Analysis & Prioritization */}
-        <div className="rounded-xl border border-dashed border-zinc-800 bg-zinc-900/20 p-6 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-amber-400"></span>
-              <h2 className="text-sm font-semibold text-zinc-300">
-                AI Analysis &amp; Sales Prioritization
-              </h2>
-            </div>
-            <span className="text-xs font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700/60">
-              Coming in Phase 3
-            </span>
-          </div>
-          <p className="text-xs text-zinc-500 max-w-xl">
-            Phase 3 will ground Gemini on this lead&apos;s budget, urgency timeline, and property requirements to compute an explainable lead score, determine buyer readiness, and recommend immediate follow-up actions.
-          </p>
-        </div>
+        {/* AI Analysis & Deterministic Scoring Section */}
+        <LeadAnalysisSection
+          leadId={lead.id}
+          initialStatus={lead.aiAnalysisStatus}
+          initialAiSummary={lead.aiSummary}
+          initialAiIntent={lead.aiIntent}
+          initialAiKeyRequirements={lead.aiKeyRequirements ?? []}
+          initialAiObjections={lead.aiObjections ?? []}
+          initialAiRecommendedNextAction={lead.aiRecommendedNextAction}
+          initialAiSuggestedResponse={lead.aiSuggestedResponse}
+          initialAiIntentLevel={lead.aiIntentLevel}
+          initialAiEngagementLevel={lead.aiEngagementLevel}
+          initialAiRequirementClarity={lead.aiRequirementClarity}
+          initialLeadScore={lead.leadScore}
+          initialLeadPriority={lead.leadPriority}
+          initialAnalyzedAt={lead.aiAnalyzedAt}
+          buyingTimeline={lead.buyingTimeline}
+          budgetInr={lead.budgetInr}
+        />
       </main>
     </div>
   );

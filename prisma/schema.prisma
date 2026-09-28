@@ -17,6 +17,23 @@ model Lead {
   buyingTimeline      String
   customerMessage     String
 
+  // Phase 3: AI Analysis fields (nullable so existing Phase 2 leads remain valid)
+  aiSummary               String?
+  aiIntent                String?
+  aiKeyRequirements       String[]  @default([])
+  aiObjections            String[]  @default([])
+  aiRecommendedNextAction String?
+  aiSuggestedResponse     String?
+  aiIntentLevel           String?
+  aiEngagementLevel       String?
+  aiRequirementClarity    String?
+  aiAnalyzedAt            DateTime?
+  aiAnalysisStatus        String?   @default("PENDING")
+
+  // Phase 3: Canonical Lead Scoring fields
+  leadScore               Int?
+  leadPriority            String?
+
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }

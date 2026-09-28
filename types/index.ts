@@ -17,4 +17,20 @@ export interface LeadRecord {
   customerMessage: string;
   createdAt: string | Date;
   updatedAt: string | Date;
+
+  // Phase 3: AI Analysis & Scoring
+  aiSummary?: string | null;
+  aiIntent?: string | null;
+  aiKeyRequirements?: string[];
+  aiObjections?: string[];
+  aiRecommendedNextAction?: string | null;
+  aiSuggestedResponse?: string | null;
+  aiIntentLevel?: string | null;
+  aiEngagementLevel?: string | null;
+  aiRequirementClarity?: string | null;
+  aiAnalyzedAt?: string | Date | null;
+  aiAnalysisStatus?: string | null;
+  leadScore?: number | null;
+  leadPriority?: string | null;
 }
+
