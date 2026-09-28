@@ -20,33 +20,30 @@ export const MAX_BUDGET_INR = 2000000000; // ₹200 Cr (safe 32-bit integer limi
 
 export const leadInputSchema = z.object({
   name: z
-    .string({ required_error: 'Name is required' })
+    .string('Name is required')
     .trim()
     .min(1, 'Name is required')
     .max(100, 'Name must be 100 characters or less'),
   location: z
-    .string({ required_error: 'Location is required' })
+    .string('Location is required')
     .trim()
     .min(1, 'Location is required')
     .max(150, 'Location must be 150 characters or less'),
   propertyRequirement: z
-    .string({ required_error: 'Property requirement is required' })
+    .string('Property requirement is required')
     .trim()
     .min(1, 'Property requirement is required')
     .max(300, 'Property requirement must be 300 characters or less'),
   budgetInr: z
-    .number({
-      required_error: 'Budget is required',
-      invalid_type_error: 'Budget must be a valid number',
-    })
+    .number('Budget is required')
     .int('Budget must be a whole integer in rupees')
     .positive('Budget must be greater than zero')
     .max(MAX_BUDGET_INR, 'Budget cannot exceed ₹200 Cr (2,000,000,000)'),
   buyingTimeline: z.enum(BUYING_TIMELINE_VALUES, {
-    errorMap: () => ({ message: 'Please select a valid buying timeline' }),
+    error: 'Please select a valid buying timeline',
   }),
   customerMessage: z
-    .string({ required_error: 'Customer message is required' })
+    .string('Customer message is required')
     .trim()
     .min(1, 'Customer message is required')
     .max(5000, 'Customer message must be 5,000 characters or less'),
