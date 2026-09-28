@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LeadPilot AI
 
-## Getting Started
+AI-powered real-estate sales lead prioritization and follow-up command center designed to answer one question for real estate agents: *"Which lead should I act on next, why, and what should I say?"*
 
-First, run the development server:
+## Current Status
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+**Phase 1 — Foundation + Database + Deployment Readiness**
+
+Phase 1 establishes the production architecture, server-side database connectivity with PostgreSQL and Prisma, runtime health verification, environment variable isolation, and deployment readiness on Vercel.
+
+> **Note**: Application features (Lead Intake, AI Scoring, Grounded Chat, Follow-Up reminders) are strictly scheduled for upcoming phases and are not yet implemented in Phase 1.
+
+## Tech Stack
+
+* **Framework**: Next.js 16 (App Router, Turbopack)
+* **UI & Components**: React 19, TypeScript, Tailwind CSS v4
+* **Database & ORM**: PostgreSQL, Prisma ORM 6.19 (Singleton client via globalThis)
+* **Deployment Target**: Vercel
+
+## System Architecture
+
+```
+Browser (Client Shell)
+       │
+       ▼
+Next.js 16 App Router (Server-side API Routes)
+       │
+       ▼
+Prisma ORM (Shared Singleton Client via globalThis)
+       │
+       ▼
+PostgreSQL Database (Pooled runtime / Direct migration)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Local Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 1. Prerequisites
+* Node.js 20+ (Node v22.17.1 recommended)
+* npm 10+
+* PostgreSQL instance running locally or via a cloud provider (e.g., Neon, Supabase)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 2. Install Dependencies
+```bash
+npm install
+```
+This triggers `postinstall` which automatically runs `prisma generate`.
 
-## Learn More
+### 3. Configure Environment Variables
+Copy `.env.example` to `.env`:
+```bash
+cp .env.example .env
+```
+Update `.env` with your PostgreSQL database credentials:
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/leadpilot?schema=public"
+DIRECT_URL="postgresql://user:password@localhost:5432/leadpilot?schema=public"
+GEMINI_API_KEY=""
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 4. Run Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 5. Verify Health Check
+Visit the live database health endpoint:
+```bash
+curl http://localhost:3000/api/health
+```
+Expected response:
+```json
+{
+  "status": "ok",
+  "database": "connected",
+  "timestamp": "..."
+}
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Environment Variables
 
-## Deploy on Vercel
+| Variable | Description | Runtime Scope | Required in Phase 1 |
+| :--- | :--- | :--- | :--- |
+| `DATABASE_URL` | PostgreSQL connection URL (pooled for serverless runtime) | Server-side only | **Yes** |
+| `DIRECT_URL` | Direct unpooled PostgreSQL connection URL (used for migrations) | Server-side only | Optional / Recommended |
+| `GEMINI_API_KEY` | Google Gemini API Key | Server-side only | No (Reserved for Phase 3) |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+> **Security Rule**: No secrets are exposed to the client bundle. Never prefix secret variables with `NEXT_PUBLIC_`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment Architecture
+
+LeadPilot AI is architected for zero-configuration serverless deployment on **Vercel**:
+* **Build Command**: `prisma generate && next build`
+* **Output**: Standalone serverless Next.js bundle
+* **Database Target**: Neon Serverless Postgres, Supabase, or any standard PostgreSQL instance
+* **Health Monitoring**: `GET /api/health` queries `SELECT 1` to ensure live database connectivity on cold and warm serverless starts.
