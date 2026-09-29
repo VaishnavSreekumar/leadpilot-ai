@@ -39,14 +39,14 @@ LeadPilot AI structures raw customer inquiries into actionable sales intelligenc
 
 ```mermaid
 flowchart LR
-    A[Inbound Customer Inquiry] --> B[Zod Validated Intake Form]
-    B --> C[(PostgreSQL Database)]
-    C --> D[Gemini Structured AI Analysis]
-    D --> E[Deterministic 100-Pt Scoring]
-    E --> F[Priority Queue HOT / WARM / COLD]
-    F --> G[Lead Detail Command Center]
-    G --> H[Grounded Sales Assistant]
-    G --> I[Smart Follow-Up Recommendation]
+    A["Inbound Customer Inquiry"] --> B["Zod Validated Intake Form"]
+    B --> C[("PostgreSQL Database")]
+    C --> D["Gemini Structured AI Analysis"]
+    D --> E["Deterministic 100-Pt Scoring"]
+    E --> F["Priority Queue (HOT / WARM / COLD)"]
+    F --> G["Lead Detail Command Center"]
+    G --> H["Grounded Sales Assistant"]
+    G --> I["Smart Follow-Up Recommendation"]
 ```
 
 ---
@@ -57,27 +57,31 @@ LeadPilot AI uses a serverless architecture where browser clients interact with 
 
 ```mermaid
 flowchart TB
-    Client[Browser / React 19 UI]
+    Client["Browser / React 19 UI"]
 
-    subgraph Serverless Backend [Next.js App Router API Routes]
-        IntakeAPI[/api/leads]
-        AnalyzeAPI[/api/leads/id/analyze]
-        ChatAPI[/api/leads/id/chat]
-        FollowUpAPI[/api/leads/id/follow-up]
+    subgraph Backend["Next.js App Router API Routes"]
+        IntakeAPI["/api/leads"]
+        AnalyzeAPI["/api/leads/[id]/analyze"]
+        ChatAPI["/api/leads/[id]/chat"]
+        FollowUpAPI["/api/leads/[id]/follow-up"]
     end
 
-    DB[(Neon PostgreSQL)]
-    Prisma[Prisma ORM Singleton]
-    Gemini[Google Gemini 2.5 Flash API]
+    DB[("Neon PostgreSQL")]
+    Prisma["Prisma ORM Singleton"]
+    Gemini["Google Gemini 2.5 Flash API"]
 
-    Client -->|HTTP POST/GET| Serverless Backend
+    Client --> IntakeAPI
+    Client --> AnalyzeAPI
+    Client --> ChatAPI
+    Client --> FollowUpAPI
+
     IntakeAPI --> Prisma
     AnalyzeAPI --> Prisma
-    AnalyzeAPI -->|Server-only Key| Gemini
+    AnalyzeAPI --> Gemini
     ChatAPI --> Prisma
-    ChatAPI -->|Grounded Context| Gemini
+    ChatAPI --> Gemini
     FollowUpAPI --> Prisma
-    FollowUpAPI -->|Structured Output| Gemini
+    FollowUpAPI --> Gemini
     Prisma --> DB
 ```
 
@@ -184,6 +188,7 @@ The Sales Assistant provides a lead-specific copilot interface. It prevents hall
 
 ```mermaid
 sequenceDiagram
+    autonumber
     actor Agent as Sales Agent
     participant UI as React Component
     participant Route as Next.js API Route
@@ -191,7 +196,7 @@ sequenceDiagram
     participant LLM as Gemini API
 
     Agent->>UI: Submit question
-    UI->>Route: POST /api/leads/[id]/chat { question }
+    UI->>Route: POST /api/leads/[id]/chat
     Route->>DB: Fetch selected lead by route parameter [id]
     DB-->>Route: Authoritative DB Lead Record
     Route->>Route: Check DB 10s cooldown (lastChatRequestAt)
@@ -221,6 +226,25 @@ Smart Follow-Up solves the agent's problem of planning post-analysis customer to
 | `3-6 months` | 5 days | **2 days** |
 | `6-12 months` | 10 days | **5 days** |
 | `exploring` / unknown | 14 days | **7 days** |
+
+### Smart Follow-Up Architecture
+
+```mermaid
+flowchart LR
+    A["Lead Timeline + Priority"] --> B["Deterministic Application Logic"]
+    B --> C[("Canonical Follow-Up Date in DB")]
+
+    D["Selected Lead Context"] --> E["Gemini 2.5 Flash"]
+    C --> E
+
+    E --> F["Follow-Up Reason"]
+    E --> G["Focus Points List"]
+    E --> H["Suggested Message Draft"]
+
+    F --> I[("Persisted to DB")]
+    G --> I
+    H --> I
+```
 
 ### Execution & Caching Rules
 - **Application Controls Timing**: `followUpRecommendedAt` date is computed by TypeScript logic (`Date.now() + days`). Gemini cannot override this date.
@@ -368,8 +392,14 @@ LeadPilot AI is deployed on Vercel with Neon Serverless Postgres:
 
 ## AI Usage Disclosure
 
-- **Runtime Product Integration**: **Google Gemini 2.5 Flash** (`@google/genai`) is used directly by the application for lead analysis, grounded Q&A, and follow-up message generation.
-- **Development Assistance**: AI coding assistants (Claude / Gemini Agentic Coding Assistants) were utilized during development for scaffold generation, prompt engineering, Zod schema design, and test suite creation.
+AI tools were used throughout development as development assistants, primarily for prompt engineering, implementation planning, code generation, and verification.
+
+- **ChatGPT and Claude** were used during the planning stage to refine implementation prompts, compare approaches, identify edge cases, and iteratively improve the development instructions before implementation.
+- **Antigravity** was used as the primary agentic coding environment. The finalized prompts were provided to Antigravity to generate implementation plans and implement the application phases.
+- **ChatGPT** was also used to review and verify the generated implementation plans, architecture, security boundaries, test coverage, and phase-specific changes before they were accepted.
+- **Google Gemini 2.5 Flash** is the runtime AI model integrated into LeadPilot AI itself. It performs lead analysis, grounded sales assistance, and Smart Follow-Up content generation.
+
+The final application logic, architecture, validation, deterministic scoring rules, database design, and integration decisions were reviewed throughout development rather than relying on AI-generated output without verification.
 
 ---
 
