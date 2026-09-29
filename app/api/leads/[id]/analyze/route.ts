@@ -108,6 +108,7 @@ export async function POST(request: Request, context: RouteContext) {
           aiObjections: analysis.objections,
           aiRecommendedNextAction: analysis.recommendedNextAction,
           aiSuggestedResponse: analysis.suggestedResponse,
+          aiSuggestedQuestions: analysis.suggestedQuestions,
           aiIntentLevel: analysis.intentLevel,
           aiEngagementLevel: analysis.engagementLevel,
           aiRequirementClarity: analysis.requirementClarity,

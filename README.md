@@ -16,7 +16,7 @@ LeadPilot AI answers one core operational question for real-estate sales agents:
 | **Framework** | Next.js 16 (App Router, Turbopack) |
 | **UI & Styling** | React 19, TypeScript, Tailwind CSS v4 |
 | **Database & ORM** | PostgreSQL (Neon Serverless), Prisma ORM 6.19 |
-| **AI Provider & Model** | Google Gemini API (`gemini-2.5-flash`) via `@google/genai` |
+| **AI Provider & Model** | Google Gemini API (`gemini-3.5-flash-lite`) via `@google/genai` |
 | **Validation Layer** | Zod 4.6.5 |
 | **Testing** | Vitest 5.0.2 |
 | **Deployment** | Vercel Serverless |
@@ -89,7 +89,7 @@ flowchart TB
 
 ## AI Architecture
 
-The system uses Google Gemini (`gemini-2.5-flash`) across three distinct backend workflows:
+The system uses Google Gemini (`gemini-3.5-flash-lite`) across three distinct backend workflows:
 
 ### 1. Lead Analysis & Extraction
 When an agent requests analysis for a lead, the server passes the structured intake data and customer message to Gemini with a JSON Schema response requirement. Gemini extracts qualitative signals (`aiSummary`, `aiIntent`, `aiKeyRequirements`, `aiObjections`, `aiIntentLevel`, `aiEngagementLevel`, `aiRequirementClarity`).

@@ -22,6 +22,7 @@ interface LeadAnalysisSectionProps {
   // Lead base fields for breakdown calculation
   buyingTimeline: string;
   budgetInr: number;
+  onAnalysisComplete?: (updatedLead: Record<string, unknown>) => void;
 }
 
 export default function LeadAnalysisSection({
@@ -41,6 +42,7 @@ export default function LeadAnalysisSection({
   initialAnalyzedAt,
   buyingTimeline,
   budgetInr,
+  onAnalysisComplete,
 }: LeadAnalysisSectionProps) {
   const router = useRouter();
 
@@ -131,6 +133,7 @@ export default function LeadAnalysisSection({
         setPriority(updated.leadPriority);
         setAnalyzedAt(updated.aiAnalyzedAt);
         setCooldownSeconds(10); // Start 10s cooldown
+        onAnalysisComplete?.(updated);
         router.refresh();
       }
     } catch {

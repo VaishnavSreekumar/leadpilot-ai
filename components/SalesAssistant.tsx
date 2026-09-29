@@ -16,13 +16,14 @@ interface SalesAssistantProps {
   leadName: string;
   leadPriority: string | null;
   isAnalyzed: boolean;
+  suggestedQuestions?: string[];
 }
 
 // ---------------------------------------------------------------------------
-// Starter prompts
+// Starter prompts fallback
 // ---------------------------------------------------------------------------
 
-const STARTER_PROMPTS = [
+const FALLBACK_STARTER_PROMPTS = [
   'Summarize this lead',
   'What should I ask next?',
   'Draft a follow-up response',
@@ -38,6 +39,7 @@ export default function SalesAssistant({
   leadName,
   leadPriority,
   isAnalyzed,
+  suggestedQuestions = [],
 }: SalesAssistantProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
@@ -48,6 +50,11 @@ export default function SalesAssistant({
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const activeSuggestions =
+    suggestedQuestions.length > 0
+      ? suggestedQuestions
+      : FALLBACK_STARTER_PROMPTS;
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -134,8 +141,7 @@ export default function SalesAssistant({
   };
 
   const handleStarterPrompt = (prompt: string) => {
-    setInputValue(prompt);
-    inputRef.current?.focus();
+    sendMessage(prompt);
   };
 
   const copyMessage = async (content: string, index: number) => {
@@ -239,25 +245,36 @@ export default function SalesAssistant({
           /* Empty state */
           <div className="flex flex-col items-center justify-center h-full py-8 gap-5">
             <div className="text-center space-y-1">
-              <p className="text-base font-bold text-zinc-900">Ask about this lead</p>
+              <p className="text-base font-bold text-zinc-900">
+                {isAnalyzed ? 'Ask about this lead' : 'Analyze this lead to get contextual suggestions'}
+              </p>
               <p className="text-xs text-zinc-500 max-w-xs leading-relaxed">
-                Answers are grounded exclusively to this lead&apos;s records and AI analysis.
+                {isAnalyzed
+                  ? "Answers are grounded exclusively to this lead's records and AI analysis."
+                  : 'Run AI Analysis on the right to extract lead intent, requirements, and generate tailored sales assistant questions.'}
               </p>
             </div>
 
-            {/* Starter prompts */}
-            <div className="flex flex-wrap gap-2 justify-center max-w-md">
-              {STARTER_PROMPTS.map((prompt) => (
-                <button
-                  key={prompt}
-                  type="button"
-                  onClick={() => handleStarterPrompt(prompt)}
-                  className="text-xs font-semibold px-3.5 py-1.5 rounded-full border border-zinc-200 bg-white hover:bg-zinc-100 hover:border-zinc-300 text-zinc-700 transition-colors shadow-2xs"
-                >
-                  {prompt}
-                </button>
-              ))}
-            </div>
+            {/* Contextual Suggestions / Starter prompts (only when analyzed) */}
+            {isAnalyzed && (
+              <div className="flex flex-col items-center gap-2 max-w-md w-full">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+                  Lead-Specific Suggested Questions
+                </span>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {activeSuggestions.map((prompt) => (
+                    <button
+                      key={prompt}
+                      type="button"
+                      onClick={() => handleStarterPrompt(prompt)}
+                      className="text-xs font-semibold px-3.5 py-2 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-100 hover:border-zinc-300 text-zinc-800 transition-colors shadow-2xs text-left leading-snug"
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           /* Conversation messages */

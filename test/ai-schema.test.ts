@@ -9,6 +9,10 @@ describe('AI Lead Analysis Schema Validation', () => {
     objections: ['Budget cap is strictly 1.2 Cr', 'Needs OC received'],
     recommendedNextAction: 'Send curated inventory of OC-ready 2BHKs in Whitefield and schedule site visit.',
     suggestedResponse: 'Hi Rajesh, I have two OC-ready 2BHK apartments in Whitefield fitting your 1.2 Cr budget.',
+    suggestedQuestions: [
+      'What specific floor preferences does Rajesh have?',
+      'Is Rajesh open to nearby ITPL locations?',
+    ],
     intentLevel: 'HIGH',
     engagementLevel: 'HIGH',
     requirementClarity: 'CLEAR',
@@ -20,6 +24,7 @@ describe('AI Lead Analysis Schema Validation', () => {
     if (parsed.success) {
       expect(parsed.data.intentLevel).toBe('HIGH');
       expect(parsed.data.keyRequirements).toHaveLength(3);
+      expect(parsed.data.suggestedQuestions).toHaveLength(2);
     }
   });
 

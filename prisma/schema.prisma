@@ -27,6 +27,7 @@ model Lead {
   aiIntentLevel           String?
   aiEngagementLevel       String?
   aiRequirementClarity    String?
+  aiSuggestedQuestions    String[]  @default([])
   aiAnalyzedAt            DateTime?
   aiAnalysisStatus        String?   @default("PENDING")
 

@@ -13,7 +13,7 @@ export default async function Home() {
   });
 
   return (
-    <div className="min-h-screen bg-[#F6F4F0] text-zinc-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F1E4DC] text-zinc-900 flex flex-col font-sans">
       {/* Top Navigation Bar */}
       <header className="border-b border-zinc-200/80 bg-white/90 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-[1536px] mx-auto px-4 sm:px-8 md:px-12 h-16 flex items-center justify-between">

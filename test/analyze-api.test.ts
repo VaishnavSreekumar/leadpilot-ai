@@ -56,6 +56,10 @@ describe('POST /api/leads/[id]/analyze Route Handler', () => {
     objections: ['High budget expectation (3 Cr)'],
     recommendedNextAction: 'Schedule a call and share available Koramangala villa listings.',
     suggestedResponse: 'Hello Priya, we have 2 exclusive villas in Koramangala ready for handover.',
+    suggestedQuestions: [
+      'Does Priya require a private garden in Koramangala?',
+      'Is Priya open to nearby HSR Layout villas?',
+    ],
     intentLevel: 'HIGH' as const,
     engagementLevel: 'HIGH' as const,
     requirementClarity: 'CLEAR' as const,
@@ -93,6 +97,7 @@ describe('POST /api/leads/[id]/analyze Route Handler', () => {
       aiObjections: mockAiOutput.objections,
       aiRecommendedNextAction: mockAiOutput.recommendedNextAction,
       aiSuggestedResponse: mockAiOutput.suggestedResponse,
+      aiSuggestedQuestions: mockAiOutput.suggestedQuestions,
       aiIntentLevel: 'HIGH',
       aiEngagementLevel: 'HIGH',
       aiRequirementClarity: 'CLEAR',
@@ -116,16 +121,17 @@ describe('POST /api/leads/[id]/analyze Route Handler', () => {
     expect(response.status).toBe(200);
     const body = await response.json();
 
-    // Verify AI analysis was called
+    // Verify AI analysis was called EXACTLY ONCE for both analysis and suggestions
     expect(aiModule.analyzeLeadWithGemini).toHaveBeenCalledTimes(1);
 
-    // Verify persistence update was called with score and priority
+    // Verify persistence update was called with score, priority, and suggested questions
     expect(prisma.lead.update).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { id: mockLeadId },
         data: expect.objectContaining({
           aiAnalysisStatus: 'COMPLETED',
           aiSummary: mockAiOutput.summary,
+          aiSuggestedQuestions: mockAiOutput.suggestedQuestions,
           leadScore: 100,
           leadPriority: 'HOT',
         }),

@@ -3,7 +3,7 @@ import { GoogleGenAI, Type } from '@google/genai';
 import { z } from 'zod';
 import { formatBudgetDisplay } from '@/lib/validations/lead';
 
-export const GEMINI_MODEL = 'gemini-2.5-flash';
+export const GEMINI_MODEL = 'gemini-3.5-flash-lite';
 
 // Strict Zod schema for validating Gemini output
 export const leadAnalysisSchema = z.object({
@@ -13,6 +13,7 @@ export const leadAnalysisSchema = z.object({
   objections: z.array(z.string().trim()).default([]),
   recommendedNextAction: z.string().trim().min(1, 'Recommended next action is required'),
   suggestedResponse: z.string().trim().min(1, 'Suggested response is required'),
+  suggestedQuestions: z.array(z.string().trim()).default([]),
   intentLevel: z.enum(['HIGH', 'MEDIUM', 'LOW'], {
     error: 'Intent level must be HIGH, MEDIUM, or LOW',
   }),
@@ -64,13 +65,22 @@ ${lead.customerMessage}
 </customer_message>
 
 [ANALYSIS & GROUNDING RULES]
-1. Factual Grounding: Base your analysis ONLY on the trusted context and customer message provided above. DO NOT invent property availability, listings, prices not supplied, discounts, amenities not supplied, possession dates, developer information, or market claims.
+0. CORE ROLE CONSTRAINT: You are a lead-understanding assistant, NOT a property-market advisor. Summarize and reason ONLY about what the customer explicitly stated. DO NOT evaluate whether stated requirements or budget are realistic, unfulfillable, or aligned with average market pricing. DO NOT introduce external market knowledge, market conditions, pricing comparisons, property availability, inventory claims, or assumptions about market feasibility.
+1. Factual Grounding: Base your analysis ONLY on the trusted context and customer message provided above. DO NOT invent property availability, listings, prices not supplied, discounts, amenities not supplied, possession dates, developer information, or market claims. Simply state customer requirements and budget as given (e.g. "Budget: ₹90,00,000 for a 4 BHK villa with a private garden in BKC, Mumbai").
 2. If any information is missing or unclear, explicitly note it in objections/concerns or recommend asking the customer.
 3. Classify intentLevel as HIGH (ready to transact/urgent/specific), MEDIUM (interested with clear requirements), or LOW (casual/vague/early exploring).
 4. Classify engagementLevel as HIGH (detailed, proactive query), MEDIUM (standard inquiry), or LOW (minimal/one-word text).
 5. Classify requirementClarity as CLEAR (specific configuration/location/budget), PARTIAL (some specifics but key gaps), or UNCLEAR (vague/broad).
-6. Provide a practical recommendedNextAction for the salesperson.
-7. Provide a natural, professional suggestedResponse grounded in the customer's stated requirements and budget.`;
+6. Provide a practical recommendedNextAction for the salesperson based ONLY on lead requirements.
+7. Provide a natural, professional suggestedResponse grounded in the customer's stated requirements and budget.
+8. Provide 3-4 specific, contextual suggestedQuestions for the salesperson to ask based ONLY on this lead.
+   STRICT GROUNDING RULES FOR SUGGESTED QUESTIONS:
+   - Suggested questions must contain ONLY information explicitly stated in the selected lead or directly derived from information explicitly stated in that lead's AI analysis.
+   - You may ask the customer to clarify or prioritize something they ALREADY explicitly stated, but you MUST NOT create a new decision, compromise, or choice for them.
+   - NEVER PROPOSE: alternative locations, alternative properties, alternative configurations, relaxing or changing a requirement, or compromising on a requirement.
+   - NEVER SUGGEST: increasing/decreasing/changing budget, introducing new preferences, options, hypothetical choices, market conditions, or availability assumptions.
+   - VALID QUESTIONS: "Is avoiding a noisy locality a strict requirement?", "How important is having a school within 5-10 km?", "Are open spaces nearby the plot a mandatory requirement?", "Is the private garden a mandatory requirement?"
+   - INVALID QUESTIONS: "Would you consider another location?", "Would you consider a smaller villa?", "Would you increase your budget?", "Would you compromise on the private garden?", "Would you consider an apartment instead?", "Would you be open to a longer commute?"`;
 }
 
 /**
@@ -105,6 +115,11 @@ export const geminiResponseSchema = {
       type: Type.STRING,
       description: 'Natural salesperson response grounded in lead context.',
     },
+    suggestedQuestions: {
+      type: Type.ARRAY,
+      items: { type: Type.STRING },
+      description: '3-4 strictly grounded suggested questions containing ONLY facts explicitly stated in the lead or directly derived from its AI analysis. MUST NOT introduce floor/elevator preferences, unmentioned streets, parking, or unstated features.',
+    },
     intentLevel: {
       type: Type.STRING,
       enum: ['HIGH', 'MEDIUM', 'LOW'],
@@ -128,6 +143,7 @@ export const geminiResponseSchema = {
     'objections',
     'recommendedNextAction',
     'suggestedResponse',
+    'suggestedQuestions',
     'intentLevel',
     'engagementLevel',
     'requirementClarity',

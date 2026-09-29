@@ -2,9 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { prisma } from '@/lib/db';
 import { formatBudgetDisplay, getTimelineLabel } from '@/lib/validations/lead';
-import LeadAnalysisSection from '@/components/LeadAnalysisSection';
-import SalesAssistant from '@/components/SalesAssistant';
-import SmartFollowUp from '@/components/SmartFollowUp';
+import LeadAnalysisWorkspace from '@/components/LeadAnalysisWorkspace';
 import { getFollowUpDays } from '@/lib/ai/follow-up';
 
 export const dynamic = 'force-dynamic';
@@ -57,7 +55,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
   });
 
   return (
-    <div className="min-h-screen bg-[#F6F4F0] text-zinc-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F1E4DC] text-zinc-900 flex flex-col font-sans">
       {/* Top Header */}
       <header className="border-b border-zinc-200/80 bg-white/90 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-[1536px] mx-auto px-4 sm:px-8 md:px-12 h-16 flex items-center justify-between">
@@ -178,58 +176,22 @@ export default async function LeadDetailPage({ params }: PageProps) {
           </div>
         </section>
 
-        {/* Priority / Score / Why this lead? / AI Analysis / Recommended Action */}
-        <LeadAnalysisSection
-          leadId={lead.id}
-          initialStatus={lead.aiAnalysisStatus}
-          initialAiSummary={lead.aiSummary}
-          initialAiIntent={lead.aiIntent}
-          initialAiKeyRequirements={lead.aiKeyRequirements ?? []}
-          initialAiObjections={lead.aiObjections ?? []}
-          initialAiRecommendedNextAction={lead.aiRecommendedNextAction}
-          initialAiSuggestedResponse={lead.aiSuggestedResponse}
-          initialAiIntentLevel={lead.aiIntentLevel}
-          initialAiEngagementLevel={lead.aiEngagementLevel}
-          initialAiRequirementClarity={lead.aiRequirementClarity}
-          initialLeadScore={lead.leadScore}
-          initialLeadPriority={lead.leadPriority}
-          initialAnalyzedAt={lead.aiAnalyzedAt}
-          buyingTimeline={lead.buyingTimeline}
-          budgetInr={lead.budgetInr}
+        {/* Lead Analysis & Workspace Grid */}
+        <LeadAnalysisWorkspace
+          lead={lead}
+          initialFollowUp={
+            lead.followUpGeneratedAt && lead.followUpReason
+              ? {
+                  recommendedAt: lead.followUpRecommendedAt?.toISOString() ?? null,
+                  daysFromNow: getFollowUpDays(lead.buyingTimeline, lead.leadPriority),
+                  reason: lead.followUpReason,
+                  focusPoints: lead.followUpFocusPoints ?? [],
+                  suggestedMessage: lead.followUpMessage ?? '',
+                  generatedAt: lead.followUpGeneratedAt.toISOString(),
+                }
+              : null
+          }
         />
-
-        {/* Sales Assistant & Smart Follow-Up Workspace Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          {/* Grounded Sales Assistant Workspace */}
-          <section aria-label="Sales Assistant">
-            <SalesAssistant
-              leadId={lead.id}
-              leadName={lead.name}
-              leadPriority={lead.leadPriority}
-              isAnalyzed={lead.aiAnalysisStatus === 'COMPLETED'}
-            />
-          </section>
-
-          {/* Smart Follow-Up Workspace */}
-          <section aria-label="Smart Follow-Up">
-            <SmartFollowUp
-              leadId={lead.id}
-              leadName={lead.name}
-              initialFollowUp={
-                lead.followUpGeneratedAt && lead.followUpReason
-                  ? {
-                      recommendedAt: lead.followUpRecommendedAt?.toISOString() ?? null,
-                      daysFromNow: getFollowUpDays(lead.buyingTimeline, lead.leadPriority),
-                      reason: lead.followUpReason,
-                      focusPoints: lead.followUpFocusPoints ?? [],
-                      suggestedMessage: lead.followUpMessage ?? '',
-                      generatedAt: lead.followUpGeneratedAt.toISOString(),
-                    }
-                  : null
-              }
-            />
-          </section>
-        </div>
       </main>
     </div>
   );
