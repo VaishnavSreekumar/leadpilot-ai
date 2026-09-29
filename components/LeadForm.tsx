@@ -127,9 +127,9 @@ export default function LeadForm() {
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-6">
       {errors.global && (
-        <div className="rounded-lg bg-rose-950/40 border border-rose-800/60 p-4 text-sm text-rose-300">
+        <div className="rounded-xl bg-rose-50 border border-rose-200 p-4 text-sm text-rose-700">
           <div className="flex items-center gap-2 font-medium">
-            <svg className="w-4 h-4 text-rose-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4 text-rose-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
             <span>{errors.global}</span>
@@ -140,8 +140,8 @@ export default function LeadForm() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Customer Name */}
         <div>
-          <label htmlFor="name" className="block text-xs font-semibold uppercase tracking-wider text-zinc-300 mb-1.5">
-            Customer Name <span className="text-rose-400">*</span>
+          <label htmlFor="name" className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1.5">
+            Customer Name <span className="text-[#C84B45]">*</span>
           </label>
           <input
             id="name"
@@ -152,19 +152,19 @@ export default function LeadForm() {
             value={formData.name}
             onChange={handleChange}
             placeholder="e.g. Vikram Sharma"
-            className={`w-full rounded-lg bg-zinc-900 border px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-1 transition-colors ${
+            className={`w-full rounded-xl bg-zinc-50 border px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:bg-white focus:ring-1 transition-colors ${
               errors.name
-                ? 'border-rose-600 focus:border-rose-500 focus:ring-rose-500'
-                : 'border-zinc-800 focus:border-emerald-500 focus:ring-emerald-500'
+                ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500'
+                : 'border-zinc-200 focus:border-zinc-400 focus:ring-zinc-400'
             }`}
           />
-          {errors.name && <p className="mt-1.5 text-xs text-rose-400">{errors.name}</p>}
+          {errors.name && <p className="mt-1.5 text-xs text-rose-600 font-medium">{errors.name}</p>}
         </div>
 
         {/* Location */}
         <div>
-          <label htmlFor="location" className="block text-xs font-semibold uppercase tracking-wider text-zinc-300 mb-1.5">
-            Target Location / City <span className="text-rose-400">*</span>
+          <label htmlFor="location" className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1.5">
+            Target Location / City <span className="text-[#C84B45]">*</span>
           </label>
           <input
             id="location"
@@ -175,20 +175,20 @@ export default function LeadForm() {
             value={formData.location}
             onChange={handleChange}
             placeholder="e.g. Whitefield, Bengaluru"
-            className={`w-full rounded-lg bg-zinc-900 border px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-1 transition-colors ${
+            className={`w-full rounded-xl bg-zinc-50 border px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:bg-white focus:ring-1 transition-colors ${
               errors.location
-                ? 'border-rose-600 focus:border-rose-500 focus:ring-rose-500'
-                : 'border-zinc-800 focus:border-emerald-500 focus:ring-emerald-500'
+                ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500'
+                : 'border-zinc-200 focus:border-zinc-400 focus:ring-zinc-400'
             }`}
           />
-          {errors.location && <p className="mt-1.5 text-xs text-rose-400">{errors.location}</p>}
+          {errors.location && <p className="mt-1.5 text-xs text-rose-600 font-medium">{errors.location}</p>}
         </div>
       </div>
 
       {/* Property Requirement */}
       <div>
-        <label htmlFor="propertyRequirement" className="block text-xs font-semibold uppercase tracking-wider text-zinc-300 mb-1.5">
-          Property Requirement <span className="text-rose-400">*</span>
+        <label htmlFor="propertyRequirement" className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1.5">
+          Property Requirement <span className="text-[#C84B45]">*</span>
         </label>
         <input
           id="propertyRequirement"
@@ -199,22 +199,22 @@ export default function LeadForm() {
           value={formData.propertyRequirement}
           onChange={handleChange}
           placeholder="e.g. 3 BHK gated community apartment near metro station"
-          className={`w-full rounded-lg bg-zinc-900 border px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-1 transition-colors ${
+          className={`w-full rounded-xl bg-zinc-50 border px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:bg-white focus:ring-1 transition-colors ${
             errors.propertyRequirement
-              ? 'border-rose-600 focus:border-rose-500 focus:ring-rose-500'
-              : 'border-zinc-800 focus:border-emerald-500 focus:ring-emerald-500'
+              ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500'
+              : 'border-zinc-200 focus:border-zinc-400 focus:ring-zinc-400'
           }`}
         />
         {errors.propertyRequirement && (
-          <p className="mt-1.5 text-xs text-rose-400">{errors.propertyRequirement}</p>
+          <p className="mt-1.5 text-xs text-rose-600 font-medium">{errors.propertyRequirement}</p>
         )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Budget in INR with Live Formatted Preview */}
         <div>
-          <label htmlFor="budgetInr" className="block text-xs font-semibold uppercase tracking-wider text-zinc-300 mb-1.5">
-            Budget (in INR) <span className="text-rose-400">*</span>
+          <label htmlFor="budgetInr" className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1.5">
+            Budget (in INR) <span className="text-[#C84B45]">*</span>
           </label>
           <div className="relative">
             <input
@@ -228,30 +228,30 @@ export default function LeadForm() {
               value={formData.budgetInr}
               onChange={handleChange}
               placeholder="e.g. 12000000"
-              className={`w-full rounded-lg bg-zinc-900 border px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-1 transition-colors ${
+              className={`w-full rounded-xl bg-zinc-50 border px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:bg-white focus:ring-1 transition-colors ${
                 errors.budgetInr
-                  ? 'border-rose-600 focus:border-rose-500 focus:ring-rose-500'
-                  : 'border-zinc-800 focus:border-emerald-500 focus:ring-emerald-500'
+                  ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500'
+                  : 'border-zinc-200 focus:border-zinc-400 focus:ring-zinc-400'
               }`}
             />
           </div>
           {budgetPreview ? (
-            <div className="mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-xs font-mono text-emerald-400">
+            <div className="mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-xs font-mono text-emerald-800">
               <span>Preview:</span>
-              <span className="font-semibold text-zinc-100">{budgetPreview}</span>
+              <span className="font-bold text-zinc-900">{budgetPreview}</span>
             </div>
           ) : (
-            <p className="mt-1.5 text-xs text-zinc-500">
+            <p className="mt-1.5 text-xs text-zinc-400 font-medium">
               Enter raw rupee digits (e.g. 12000000 for 1.2 Crore)
             </p>
           )}
-          {errors.budgetInr && <p className="mt-1 text-xs text-rose-400">{errors.budgetInr}</p>}
+          {errors.budgetInr && <p className="mt-1 text-xs text-rose-600 font-medium">{errors.budgetInr}</p>}
         </div>
 
         {/* Buying Timeline */}
         <div>
-          <label htmlFor="buyingTimeline" className="block text-xs font-semibold uppercase tracking-wider text-zinc-300 mb-1.5">
-            Buying Timeline <span className="text-rose-400">*</span>
+          <label htmlFor="buyingTimeline" className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1.5">
+            Buying Timeline <span className="text-[#C84B45]">*</span>
           </label>
           <select
             id="buyingTimeline"
@@ -259,20 +259,20 @@ export default function LeadForm() {
             required
             value={formData.buyingTimeline}
             onChange={handleChange}
-            className={`w-full rounded-lg bg-zinc-900 border px-3.5 py-2.5 text-sm text-zinc-100 focus:outline-none focus:ring-1 transition-colors ${
+            className={`w-full rounded-xl bg-zinc-50 border px-3.5 py-2.5 text-sm text-zinc-900 focus:outline-none focus:bg-white focus:ring-1 transition-colors ${
               errors.buyingTimeline
-                ? 'border-rose-600 focus:border-rose-500 focus:ring-rose-500'
-                : 'border-zinc-800 focus:border-emerald-500 focus:ring-emerald-500'
+                ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500'
+                : 'border-zinc-200 focus:border-zinc-400 focus:ring-zinc-400'
             }`}
           >
             {BUYING_TIMELINES.map((t) => (
-              <option key={t.value} value={t.value} className="bg-zinc-900 text-zinc-100">
+              <option key={t.value} value={t.value} className="bg-white text-zinc-900">
                 {t.label}
               </option>
             ))}
           </select>
           {errors.buyingTimeline && (
-            <p className="mt-1.5 text-xs text-rose-400">{errors.buyingTimeline}</p>
+            <p className="mt-1.5 text-xs text-rose-600 font-medium">{errors.buyingTimeline}</p>
           )}
         </div>
       </div>
@@ -280,10 +280,10 @@ export default function LeadForm() {
       {/* Customer Message */}
       <div>
         <div className="flex items-center justify-between mb-1.5">
-          <label htmlFor="customerMessage" className="block text-xs font-semibold uppercase tracking-wider text-zinc-300">
-            Inbound Customer Message / Inquiry <span className="text-rose-400">*</span>
+          <label htmlFor="customerMessage" className="block text-xs font-bold uppercase tracking-wider text-zinc-700">
+            Inbound Customer Message / Inquiry <span className="text-[#C84B45]">*</span>
           </label>
-          <span className="text-xs font-mono text-zinc-500">
+          <span className="text-xs font-mono text-zinc-400">
             {formData.customerMessage.length} / 5,000
           </span>
         </div>
@@ -296,22 +296,22 @@ export default function LeadForm() {
           value={formData.customerMessage}
           onChange={handleChange}
           placeholder="Paste or enter the customer's full inbound inquiry, email, or chat notes..."
-          className={`w-full rounded-lg bg-zinc-900 border px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-1 transition-colors ${
+          className={`w-full rounded-xl bg-zinc-50 border px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:bg-white focus:ring-1 transition-colors ${
             errors.customerMessage
-              ? 'border-rose-600 focus:border-rose-500 focus:ring-rose-500'
-              : 'border-zinc-800 focus:border-emerald-500 focus:ring-emerald-500'
+              ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500'
+              : 'border-zinc-200 focus:border-zinc-400 focus:ring-zinc-400'
           }`}
         />
         {errors.customerMessage && (
-          <p className="mt-1.5 text-xs text-rose-400">{errors.customerMessage}</p>
+          <p className="mt-1.5 text-xs text-rose-600 font-medium">{errors.customerMessage}</p>
         )}
       </div>
 
       {/* Actions */}
-      <div className="pt-4 border-t border-zinc-800 flex items-center justify-between">
+      <div className="pt-4 border-t border-zinc-100 flex items-center justify-between">
         <Link
           href="/"
-          className="text-xs font-medium text-zinc-400 hover:text-zinc-200 transition-colors"
+          className="text-xs font-semibold text-zinc-500 hover:text-zinc-900 transition-colors"
         >
           &larr; Cancel &amp; Back to Dashboard
         </Link>
@@ -319,7 +319,7 @@ export default function LeadForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-800 disabled:opacity-60 text-white text-sm font-medium transition-colors shadow-sm cursor-pointer disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#C84B45] hover:bg-[#b03e39] disabled:opacity-60 text-white text-xs font-bold transition-colors shadow-xs cursor-pointer disabled:cursor-not-allowed"
         >
           {isSubmitting ? (
             <>

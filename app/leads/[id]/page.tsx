@@ -57,126 +57,128 @@ export default async function LeadDetailPage({ params }: PageProps) {
   });
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col">
+    <div className="min-h-screen bg-[#F6F4F0] text-zinc-900 flex flex-col font-sans">
       {/* Top Header */}
-      <header className="border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+      <header className="border-b border-zinc-200/80 bg-white/90 backdrop-blur-md sticky top-0 z-50">
+        <div className="max-w-[1536px] mx-auto px-4 sm:px-8 md:px-12 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="text-xs font-medium text-zinc-400 hover:text-zinc-100 flex items-center gap-1 transition-colors"
+              className="text-xs font-semibold text-zinc-500 hover:text-zinc-900 flex items-center gap-1.5 transition-colors"
             >
               <span>&larr;</span>
               <span>Back to Dashboard</span>
             </Link>
-            <span className="text-zinc-700">/</span>
-            <span className="font-semibold text-sm tracking-tight text-white truncate max-w-[200px] sm:max-w-xs">
+            <span className="text-zinc-300">/</span>
+            <span className="font-bold text-sm tracking-tight text-zinc-900 truncate max-w-[200px] sm:max-w-md">
               {lead.name}
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
+            <span className="text-xs font-mono text-zinc-500 font-semibold hidden md:inline">
+              Lead Record #{lead.id}
+            </span>
             <Link
               href="/leads/new"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-xs font-medium text-zinc-200 border border-zinc-700/60 transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#C84B45] hover:bg-[#B33F3A] text-xs font-bold text-white shadow-sm transition-all active:scale-95"
             >
-              <span>+ Add Another</span>
+              <span>+ Add Lead</span>
             </Link>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-8 space-y-6">
-        {/* Lead Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-800">
-          <div>
-            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-              <span className="text-xs font-mono px-2 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-800">
-                ID: {lead.id}
-              </span>
-              {lead.aiAnalysisStatus === 'COMPLETED' ? (
-                <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/40">
-                  AI Analyzed ({lead.leadScore ?? '--'}/100 &bull; {lead.leadPriority ?? 'COLD'})
+      {/* Main Content Workspace */}
+      <main className="flex-1 max-w-[1536px] mx-auto w-full px-4 sm:px-8 md:px-12 py-8 space-y-8">
+        {/* Lead Identity Section */}
+        <section aria-label="Lead Identity" className="bg-white rounded-2xl border border-zinc-200/80 p-6 sm:p-8 shadow-xs space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-100">
+            <div>
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <span className="text-[11px] font-mono font-semibold px-3 py-1 rounded-full bg-zinc-100 text-zinc-700 border border-zinc-200/80">
+                  ID: {lead.id}
                 </span>
-              ) : lead.aiAnalysisStatus === 'FAILED' ? (
-                <span className="text-xs font-mono px-2 py-0.5 rounded bg-rose-950/60 text-rose-400 border border-rose-800/40">
-                  AI Analysis Unavailable
-                </span>
-              ) : (
-                <span className="text-xs font-mono px-2 py-0.5 rounded bg-zinc-900 text-amber-400 border border-amber-900/40">
-                  AI Analysis Pending
-                </span>
-              )}
+                {lead.aiAnalysisStatus === 'COMPLETED' ? (
+                  <span className="text-[11px] font-mono font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/80">
+                    AI Analyzed ({lead.leadScore ?? '--'}/100 &bull; {lead.leadPriority ?? 'COLD'})
+                  </span>
+                ) : lead.aiAnalysisStatus === 'FAILED' ? (
+                  <span className="text-[11px] font-mono font-bold px-3 py-1 rounded-full bg-rose-50 text-rose-800 border border-rose-200/80">
+                    AI Analysis Unavailable
+                  </span>
+                ) : (
+                  <span className="text-[11px] font-mono font-bold px-3 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200/80">
+                    AI Analysis Pending
+                  </span>
+                )}
+              </div>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-zinc-900">
+                {lead.name}
+              </h1>
+              <p className="text-sm font-semibold text-zinc-500 mt-1 flex items-center gap-1.5">
+                <svg className="w-4 h-4 text-zinc-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span>{lead.location}</span>
+              </p>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-              {lead.name}
-            </h1>
-            <p className="text-sm text-zinc-400 mt-1 flex items-center gap-1.5">
-              <svg className="w-4 h-4 text-zinc-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span>{lead.location}</span>
-            </p>
+
+            <div className="flex flex-col sm:items-end text-xs text-zinc-400 font-mono space-y-1 font-medium">
+              <span>Created: {createdDate}</span>
+              <span>Updated: {updatedDate}</span>
+            </div>
           </div>
 
-          <div className="flex flex-col sm:items-end text-xs text-zinc-500 font-mono space-y-1">
-            <span>Created: {createdDate}</span>
-            <span>Updated: {updatedDate}</span>
-          </div>
-        </div>
+          {/* Core Attributes Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="rounded-xl border border-zinc-200/80 bg-zinc-50/60 p-4">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">
+                Target Budget
+              </span>
+              <p className="text-xl font-extrabold text-zinc-900 font-mono">
+                {formatBudgetDisplay(lead.budgetInr)}
+              </p>
+              <p className="text-xs text-zinc-400 mt-1 font-mono font-medium">
+                Raw: ₹{lead.budgetInr.toLocaleString('en-IN')}
+              </p>
+            </div>
 
-        {/* Lead Core Attributes Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Budget */}
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-4">
-            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500 block mb-1">
-              Target Budget
+            <div className="rounded-xl border border-zinc-200/80 bg-zinc-50/60 p-4">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">
+                Buying Timeline
+              </span>
+              <p className="text-lg font-bold text-zinc-900">
+                {getTimelineLabel(lead.buyingTimeline)}
+              </p>
+              <p className="text-xs text-zinc-400 mt-1 font-mono font-medium">
+                Key: {lead.buyingTimeline}
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-zinc-200/80 bg-zinc-50/60 p-4">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">
+                Property Requirement
+              </span>
+              <p className="text-sm font-bold text-zinc-800 leading-snug">
+                {lead.propertyRequirement}
+              </p>
+            </div>
+          </div>
+
+          {/* Inbound Customer Message */}
+          <div className="space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-zinc-500 block">
+              Inbound Customer Message / Conversation Notes
             </span>
-            <p className="text-lg font-bold text-zinc-100 font-mono">
-              {formatBudgetDisplay(lead.budgetInr)}
-            </p>
-            <p className="text-xs text-zinc-500 mt-1 font-mono">
-              Raw INR: {lead.budgetInr.toLocaleString('en-IN')}
-            </p>
+            <div className="p-4 sm:p-5 rounded-xl bg-zinc-50 border border-zinc-200/80 text-sm text-zinc-700 whitespace-pre-wrap leading-relaxed font-medium">
+              {lead.customerMessage}
+            </div>
           </div>
+        </section>
 
-          {/* Buying Timeline */}
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-4">
-            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500 block mb-1">
-              Buying Timeline
-            </span>
-            <p className="text-base font-semibold text-zinc-100">
-              {getTimelineLabel(lead.buyingTimeline)}
-            </p>
-            <p className="text-xs text-zinc-500 mt-1 font-mono">
-              Key: {lead.buyingTimeline}
-            </p>
-          </div>
-
-          {/* Property Requirement */}
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-4">
-            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500 block mb-1">
-              Property Requirement
-            </span>
-            <p className="text-sm font-medium text-zinc-200">
-              {lead.propertyRequirement}
-            </p>
-          </div>
-        </div>
-
-        {/* Inbound Customer Message */}
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-6 space-y-2">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-            Inbound Customer Message / Conversation Notes
-          </h2>
-          <div className="p-4 rounded-lg bg-zinc-950 border border-zinc-800/80 text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed">
-            {lead.customerMessage}
-          </div>
-        </div>
-
-        {/* AI Analysis & Deterministic Scoring Section */}
+        {/* Priority / Score / Why this lead? / AI Analysis / Recommended Action */}
         <LeadAnalysisSection
           leadId={lead.id}
           initialStatus={lead.aiAnalysisStatus}
@@ -196,41 +198,38 @@ export default async function LeadDetailPage({ params }: PageProps) {
           budgetInr={lead.budgetInr}
         />
 
-        {/* Phase 5: Grounded Sales Assistant */}
-        <section aria-label="Sales Assistant">
-          <div className="mb-3 flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-indigo-400"></span>
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              Sales Assistant
-            </h2>
-          </div>
-          <SalesAssistant
-            leadId={lead.id}
-            leadName={lead.name}
-            leadPriority={lead.leadPriority}
-            isAnalyzed={lead.aiAnalysisStatus === 'COMPLETED'}
-          />
-        </section>
+        {/* Sales Assistant & Smart Follow-Up Workspace Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          {/* Grounded Sales Assistant Workspace */}
+          <section aria-label="Sales Assistant">
+            <SalesAssistant
+              leadId={lead.id}
+              leadName={lead.name}
+              leadPriority={lead.leadPriority}
+              isAnalyzed={lead.aiAnalysisStatus === 'COMPLETED'}
+            />
+          </section>
 
-        {/* Phase 6: Smart Follow-Up */}
-        <section aria-label="Smart Follow-Up">
-          <SmartFollowUp
-            leadId={lead.id}
-            leadName={lead.name}
-            initialFollowUp={
-              lead.followUpGeneratedAt && lead.followUpReason
-                ? {
-                    recommendedAt: lead.followUpRecommendedAt?.toISOString() ?? null,
-                    daysFromNow: getFollowUpDays(lead.buyingTimeline, lead.leadPriority),
-                    reason: lead.followUpReason,
-                    focusPoints: lead.followUpFocusPoints ?? [],
-                    suggestedMessage: lead.followUpMessage ?? '',
-                    generatedAt: lead.followUpGeneratedAt.toISOString(),
-                  }
-                : null
-            }
-          />
-        </section>
+          {/* Smart Follow-Up Workspace */}
+          <section aria-label="Smart Follow-Up">
+            <SmartFollowUp
+              leadId={lead.id}
+              leadName={lead.name}
+              initialFollowUp={
+                lead.followUpGeneratedAt && lead.followUpReason
+                  ? {
+                      recommendedAt: lead.followUpRecommendedAt?.toISOString() ?? null,
+                      daysFromNow: getFollowUpDays(lead.buyingTimeline, lead.leadPriority),
+                      reason: lead.followUpReason,
+                      focusPoints: lead.followUpFocusPoints ?? [],
+                      suggestedMessage: lead.followUpMessage ?? '',
+                      generatedAt: lead.followUpGeneratedAt.toISOString(),
+                    }
+                  : null
+              }
+            />
+          </section>
+        </div>
       </main>
     </div>
   );

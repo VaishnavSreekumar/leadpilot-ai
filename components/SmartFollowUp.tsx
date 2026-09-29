@@ -99,34 +99,37 @@ export default function SmartFollowUp({
     : null;
 
   return (
-    <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 overflow-hidden">
+    <div className="bg-white rounded-2xl border border-zinc-200/80 shadow-xs overflow-hidden">
       {/* Section Header */}
-      <div className="px-6 py-4 border-b border-zinc-800/80 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-amber-400 shrink-0" />
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-            Smart Follow-Up
-          </h2>
+      <div className="px-6 sm:px-8 py-5 border-b border-zinc-100 flex items-center justify-between gap-4 bg-zinc-50/50">
+        <div className="flex items-center gap-2.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-amber-500 shrink-0" />
+          <div>
+            <h2 className="text-sm font-extrabold text-zinc-900 uppercase tracking-wider">
+              Smart Follow-Up
+            </h2>
+            <p className="text-xs text-zinc-500 font-medium">Custom AI cadence recommendation &amp; action plan</p>
+          </div>
         </div>
 
         {followUp && !isLoading && (
           <button
             id="smart-follow-up-regenerate-btn"
             onClick={() => generate(true)}
-            className="text-xs px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700/60 transition-colors font-medium"
+            className="text-xs px-3.5 py-1.5 rounded-xl bg-white hover:bg-zinc-100 text-zinc-700 border border-zinc-200 transition-colors font-semibold shadow-2xs"
           >
             Regenerate
           </button>
         )}
       </div>
 
-      <div className="p-6">
+      <div className="p-6 sm:p-8">
         {/* Empty state */}
         {!followUp && !isLoading && !error && (
           <div className="flex flex-col items-center justify-center py-8 text-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-amber-950/50 border border-amber-900/40 flex items-center justify-center">
+            <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center">
               <svg
-                className="w-5 h-5 text-amber-400"
+                className="w-6 h-6 text-amber-600"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -140,15 +143,15 @@ export default function SmartFollowUp({
               </svg>
             </div>
             <div>
-              <p className="text-sm font-medium text-zinc-200 mb-1">No follow-up recommendation yet</p>
-              <p className="text-xs text-zinc-500">
-                Generate a recommended follow-up plan for {leadName}
+              <p className="text-base font-extrabold text-zinc-900 mb-1">No follow-up recommendation yet</p>
+              <p className="text-xs text-zinc-500 max-w-sm">
+                Generate a precision timing &amp; messaging follow-up strategy tailored to {leadName}
               </p>
             </div>
             <button
               id="smart-follow-up-generate-btn"
               onClick={() => generate(false)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-sm font-semibold transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#C84B45] hover:bg-[#b03e39] text-white text-xs font-bold transition-colors shadow-xs"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
@@ -158,26 +161,26 @@ export default function SmartFollowUp({
                   d="M13 10V3L4 14h7v7l9-11h-7z"
                 />
               </svg>
-              Generate Follow-Up
+              Generate Smart Follow-Up
             </button>
           </div>
         )}
 
         {/* Loading state */}
         {isLoading && (
-          <div className="flex flex-col items-center justify-center py-8 gap-3">
-            <div className="w-6 h-6 border-2 border-amber-400 border-t-transparent rounded-full animate-spin" />
-            <p className="text-sm text-zinc-400">Generating follow-up recommendation…</p>
+          <div className="flex flex-col items-center justify-center py-10 gap-3">
+            <div className="w-7 h-7 border-3 border-[#C84B45] border-t-transparent rounded-full animate-spin" />
+            <p className="text-sm font-medium text-zinc-600">Generating follow-up recommendation…</p>
           </div>
         )}
 
         {/* Error state (no preserved data) */}
         {error && !followUp && (
-          <div className="rounded-lg bg-rose-950/40 border border-rose-800/40 p-4 mb-4">
-            <p className="text-sm text-rose-400">{error}</p>
+          <div className="rounded-xl bg-rose-50 border border-rose-200 p-4 mb-4">
+            <p className="text-sm font-medium text-rose-700">{error}</p>
             <button
               onClick={() => { setError(null); generate(false); }}
-              className="mt-3 text-xs px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700/60 transition-colors"
+              className="mt-3 text-xs px-3 py-1.5 rounded-lg bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200 transition-colors font-semibold"
             >
               Try Again
             </button>
@@ -194,38 +197,46 @@ export default function SmartFollowUp({
               </div>
             )}
 
-            {/* Timing card */}
-            <div className="rounded-lg bg-amber-950/20 border border-amber-800/30 px-5 py-4 flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full bg-amber-900/50 border border-amber-700/40 flex items-center justify-center shrink-0">
-                <svg className="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+            {/* Prominent Timing Card */}
+            <div className="rounded-2xl bg-amber-50/70 border border-amber-200/80 p-5 sm:p-6 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-200 flex items-center justify-center shrink-0">
+                  <svg className="w-6 h-6 text-amber-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wider text-amber-900/70 mb-0.5">
+                    Recommended Follow-Up Timing
+                  </p>
+                  <p className="text-2xl sm:text-3xl font-extrabold text-amber-950 tracking-tight">
+                    in {followUp.daysFromNow} day{followUp.daysFromNow !== 1 ? 's' : ''}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-amber-400/70 mb-0.5">
-                  Recommended Follow-Up
-                </p>
-                <p className="text-lg font-bold text-amber-300">
-                  in {followUp.daysFromNow} day{followUp.daysFromNow !== 1 ? 's' : ''}
-                </p>
-              </div>
+
+              <span className="hidden sm:inline-block px-3.5 py-1 rounded-full bg-amber-200/60 text-amber-900 text-xs font-bold">
+                Action Required
+              </span>
             </div>
 
             {/* Reason */}
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">Reason</p>
-              <p className="text-sm text-zinc-300 leading-relaxed">{followUp.reason}</p>
+            <div className="space-y-1.5">
+              <p className="text-xs font-bold uppercase tracking-wider text-zinc-400">Timing Rationale</p>
+              <p className="text-sm font-semibold text-zinc-800 leading-relaxed bg-zinc-50 p-4 rounded-xl border border-zinc-200/80">
+                {followUp.reason}
+              </p>
             </div>
 
             {/* Focus points */}
             {followUp.focusPoints.length > 0 && (
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">Focus Points</p>
-                <ul className="space-y-1.5">
+              <div className="space-y-2">
+                <p className="text-xs font-bold uppercase tracking-wider text-zinc-400">Key Conversation Focus Points</p>
+                <ul className="space-y-2">
                   {followUp.focusPoints.map((pt, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-zinc-300">
-                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-400 shrink-0" />
-                      {pt}
+                    <li key={i} className="flex items-start gap-2.5 text-sm font-medium text-zinc-800 bg-zinc-50/60 px-3.5 py-2.5 rounded-xl border border-zinc-200/60">
+                      <span className="mt-1.5 h-2 w-2 rounded-full bg-amber-500 shrink-0" />
+                      <span>{pt}</span>
                     </li>
                   ))}
                 </ul>
@@ -233,13 +244,13 @@ export default function SmartFollowUp({
             )}
 
             {/* Suggested message */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Suggested Message</p>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-bold uppercase tracking-wider text-zinc-400">Suggested Follow-Up Message</p>
                 <button
                   id="smart-follow-up-copy-btn"
                   onClick={copyMessage}
-                  className="text-xs px-2.5 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 border border-zinc-700/60 transition-colors flex items-center gap-1.5"
+                  className="text-xs px-3 py-1.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-700 transition-colors flex items-center gap-1.5 font-semibold"
                 >
                   {copied ? (
                     <>
@@ -258,14 +269,14 @@ export default function SmartFollowUp({
                   )}
                 </button>
               </div>
-              <div className="rounded-lg bg-zinc-950 border border-zinc-800 p-4 text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed font-mono text-xs">
+              <div className="rounded-xl bg-zinc-50 border border-zinc-200/80 p-4 text-sm text-zinc-800 whitespace-pre-wrap leading-relaxed font-mono text-xs">
                 {followUp.suggestedMessage}
               </div>
             </div>
 
             {/* Footer metadata */}
             {generatedDate && (
-              <p className="text-xs text-zinc-600 font-mono pt-1">
+              <p className="text-[11px] text-zinc-400 font-mono pt-1">
                 Generated: {generatedDate}
               </p>
             )}

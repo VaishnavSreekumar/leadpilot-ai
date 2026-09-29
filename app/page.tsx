@@ -1,7 +1,5 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/db';
-import SystemStatus from '@/components/SystemStatus';
-import PhaseRoadmap from '@/components/PhaseRoadmap';
 import LeadTable from '@/components/LeadTable';
 
 export const dynamic = 'force-dynamic';
@@ -15,26 +13,29 @@ export default async function Home() {
   });
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col">
+    <div className="min-h-screen bg-[#F6F4F0] text-zinc-900 flex flex-col font-sans">
       {/* Top Navigation Bar */}
-      <header className="border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="h-7 w-7 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
-              <div className="h-2.5 w-2.5 rounded bg-emerald-400"></div>
+      <header className="border-b border-zinc-200/80 bg-white/90 backdrop-blur-md sticky top-0 z-50">
+        <div className="max-w-[1536px] mx-auto px-4 sm:px-8 md:px-12 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-xl bg-[#C84B45]/10 border border-[#C84B45]/20 flex items-center justify-center shrink-0">
+              <div className="h-3.5 w-3.5 rounded-full bg-[#C84B45]"></div>
             </div>
-            <span className="font-semibold text-sm tracking-tight text-white">LeadPilot AI</span>
-            <span className="text-zinc-500 text-xs font-mono">v0.4.0</span>
+            <div className="flex items-baseline gap-2.5">
+              <span className="font-extrabold text-lg tracking-tight text-zinc-900">LeadPilot AI</span>
+              <span className="hidden sm:inline-block text-xs font-bold uppercase tracking-wider text-[#C84B45] font-mono">
+                Sales Command Center
+              </span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono font-medium rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-              Phase 4: Sales Priority Queue
+          <div className="flex items-center gap-4">
+            <span className="text-xs font-mono text-zinc-500 font-semibold hidden md:inline">
+              Real Estate Sales Intelligence
             </span>
             <Link
               href="/leads/new"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#C84B45] hover:bg-[#B33F3A] text-white text-xs font-bold transition-all shadow-sm active:scale-95"
             >
               <span>+ Add Lead</span>
             </Link>
@@ -43,31 +44,31 @@ export default async function Home() {
       </header>
 
       {/* Main Content Workspace */}
-      <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 py-8 space-y-8">
-        {/* Workspace Header & Action Bar */}
-        <section className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-800/80">
-          <div>
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-xs font-medium text-zinc-400 mb-2">
-              <span>Real Estate Sales Command Center</span>
+      <main className="flex-1 max-w-[1536px] mx-auto w-full px-4 sm:px-8 md:px-12 py-10 space-y-10">
+        {/* Workspace Hero & Positioning */}
+        <section className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-zinc-200/80">
+          <div className="space-y-2 max-w-3xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C84B45]/10 border border-[#C84B45]/20 text-xs font-bold tracking-wider uppercase text-[#C84B45]">
+              <span>Real Estate Lead Prioritization</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-              Sales Priority Queue
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-zinc-900 leading-none">
+              Your leads. Prioritized.
             </h1>
-            <p className="text-sm text-zinc-400 mt-1">
-              &ldquo;Which lead should I act on next, why, and what should I say?&rdquo;
+            <p className="text-base sm:text-lg text-zinc-600 font-medium leading-relaxed pt-1">
+              Know who to call, why they matter, and what to say next.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="px-3.5 py-2 rounded-lg bg-zinc-900 border border-zinc-800 font-mono text-xs">
-              <span className="text-zinc-500 mr-2">DATABASE TOTAL:</span>
-              <span className="text-zinc-100 font-bold text-sm">
+          <div className="flex items-center gap-4 shrink-0">
+            <div className="px-5 py-3 rounded-2xl bg-white border border-zinc-200/80 shadow-xs font-mono text-xs flex items-center gap-4">
+              <span className="text-zinc-500 font-sans text-xs font-bold uppercase tracking-wider">Queue Total</span>
+              <span className="text-zinc-900 font-extrabold text-lg font-mono">
                 {leads.length} {leads.length === 1 ? 'Lead' : 'Leads'}
               </span>
             </div>
             <Link
               href="/leads/new"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors shadow-sm shrink-0"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-[#C84B45] hover:bg-[#B33F3A] text-white text-xs font-bold transition-all shadow-sm active:scale-95"
             >
               <span>+ Add Lead</span>
             </Link>
@@ -75,42 +76,39 @@ export default async function Home() {
         </section>
 
         {/* Primary Lead Queue Workspace */}
-        <section className="space-y-3">
+        <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              Ranked Inbound Leads
-            </h2>
-            <span className="text-xs font-mono text-zinc-500">
-              Ranked by: Priority Score DESC (nulls last) &bull; Newest First
+            <div>
+              <h2 className="text-sm font-extrabold uppercase tracking-wider text-[#C84B45]">
+                Sales Priority Queue
+              </h2>
+              <p className="text-xs text-zinc-500 mt-0.5 font-medium">
+                Ranked by canonical score &bull; High intent and urgent timelines first
+              </p>
+            </div>
+            <span className="text-xs font-mono text-zinc-400 font-semibold hidden sm:inline">
+              ORDER: Priority Score DESC &bull; Newest First
             </span>
           </div>
           <LeadTable leads={leads} />
         </section>
-
-        {/* Phase Implementation Roadmap */}
-        <section>
-          <PhaseRoadmap />
-        </section>
-
-        {/* Secondary: Infrastructure & Health Monitoring */}
-        <section className="space-y-3 pt-4 border-t border-zinc-800/60">
-          <SystemStatus />
-        </section>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-800/60 py-6 mt-12 bg-zinc-950">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
-          <p>LeadPilot AI &bull; Internal Salesperson Tool &bull; Phase 2</p>
-          <div className="flex items-center gap-4 font-mono">
-            <span>Next.js 16</span>
+      <footer className="border-t border-zinc-200/80 py-8 mt-16 bg-white">
+        <div className="max-w-[1536px] mx-auto px-4 sm:px-8 md:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500 font-medium">
+          <p>LeadPilot AI &bull; Real Estate Sales Intelligence</p>
+          <div className="flex items-center gap-4 font-mono text-[#C84B45] font-semibold text-[11px]">
+            <span>Prioritize</span>
             <span>&bull;</span>
-            <span>Prisma 6</span>
+            <span>Understand</span>
             <span>&bull;</span>
-            <span>PostgreSQL (Neon)</span>
+            <span>Follow Up</span>
           </div>
         </div>
       </footer>
     </div>
   );
 }
+
+

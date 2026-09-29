@@ -155,12 +155,12 @@ export default function LeadAnalysisSection({
   const getPriorityBadgeClass = (pri: string | null) => {
     switch (pri) {
       case 'HOT':
-        return 'bg-rose-500/10 text-rose-400 border-rose-500/30';
+        return 'bg-rose-50 text-rose-700 border-rose-200/80';
       case 'WARM':
-        return 'bg-amber-500/10 text-amber-400 border-amber-500/30';
+        return 'bg-amber-50 text-amber-800 border-amber-200/80';
       case 'COLD':
       default:
-        return 'bg-sky-500/10 text-sky-400 border-sky-500/30';
+        return 'bg-slate-100 text-slate-700 border-slate-200/80';
     }
   };
 
@@ -179,24 +179,24 @@ export default function LeadAnalysisSection({
     return (
       <div className="space-y-6">
         {/* Top Header Card: Score & Priority Overview */}
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-zinc-800/80">
+        <div className="bg-white rounded-2xl border border-zinc-200/80 p-6 sm:p-8 shadow-xs space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-zinc-100">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
-                <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+                <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">
                   AI Lead Analysis &amp; Scoring
                 </span>
                 {formattedAnalyzedDate && (
-                  <span className="text-[11px] font-mono text-zinc-500">
+                  <span className="text-xs font-mono text-zinc-400">
                     &bull; Analyzed {formattedAnalyzedDate}
                   </span>
                 )}
               </div>
-              <h2 className="text-xl font-bold tracking-tight text-white">
+              <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-zinc-900">
                 Sales Readiness Score
               </h2>
-              <p className="text-xs text-zinc-400">
+              <p className="text-xs font-medium text-zinc-500">
                 Explainable, deterministic heuristic derived from AI intent extraction and intake parameters.
               </p>
             </div>
@@ -204,19 +204,19 @@ export default function LeadAnalysisSection({
             {/* Score & Priority Display */}
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <div className="flex items-baseline justify-end gap-1.5 font-mono">
-                  <span className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+                <div className="flex items-baseline justify-end gap-1 font-mono">
+                  <span className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight">
                     {score ?? derivedScore?.score ?? '--'}
                   </span>
-                  <span className="text-sm font-semibold text-zinc-500">/ 100</span>
+                  <span className="text-sm font-semibold text-zinc-400">/ 100</span>
                 </div>
-                <p className="text-[11px] font-mono text-zinc-400 uppercase tracking-wider">
+                <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-wider">
                   Lead Score
                 </p>
               </div>
 
               <div
-                className={`px-3.5 py-2 rounded-lg border font-bold text-sm tracking-wider uppercase ${getPriorityBadgeClass(
+                className={`px-4 py-2 rounded-xl border font-extrabold text-sm tracking-wider uppercase ${getPriorityBadgeClass(
                   priority || derivedScore?.priority || 'COLD'
                 )}`}
               >
@@ -225,63 +225,63 @@ export default function LeadAnalysisSection({
             </div>
           </div>
 
-          {/* Derived Score Breakdown (Section 17) */}
+          {/* Derived Score Breakdown */}
           {derivedScore && (
-            <div className="pt-6 space-y-3">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+            <div className="space-y-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
                 Deterministic Score Breakdown
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
                 {/* Intent */}
-                <div className="rounded-lg bg-zinc-950/70 border border-zinc-800/80 p-2.5">
-                  <span className="text-[11px] text-zinc-500 block uppercase tracking-wider">Intent</span>
+                <div className="rounded-xl bg-zinc-50 border border-zinc-200/80 p-3">
+                  <span className="text-[11px] text-zinc-500 block uppercase tracking-wider font-semibold">Intent</span>
                   <div className="flex items-baseline justify-between mt-1">
-                    <span className="text-xs font-medium text-zinc-200">{intentLevel}</span>
-                    <span className="text-xs font-mono font-bold text-emerald-400">
+                    <span className="text-xs font-bold text-zinc-800">{intentLevel}</span>
+                    <span className="text-xs font-mono font-bold text-emerald-600">
                       +{derivedScore.breakdown.intent.points}
                     </span>
                   </div>
                 </div>
 
                 {/* Timeline */}
-                <div className="rounded-lg bg-zinc-950/70 border border-zinc-800/80 p-2.5">
-                  <span className="text-[11px] text-zinc-500 block uppercase tracking-wider">Timeline</span>
+                <div className="rounded-xl bg-zinc-50 border border-zinc-200/80 p-3">
+                  <span className="text-[11px] text-zinc-500 block uppercase tracking-wider font-semibold">Timeline</span>
                   <div className="flex items-baseline justify-between mt-1">
-                    <span className="text-xs font-medium text-zinc-200 truncate">{buyingTimeline}</span>
-                    <span className="text-xs font-mono font-bold text-emerald-400">
+                    <span className="text-xs font-bold text-zinc-800 truncate">{buyingTimeline}</span>
+                    <span className="text-xs font-mono font-bold text-emerald-600">
                       +{derivedScore.breakdown.timeline.points}
                     </span>
                   </div>
                 </div>
 
                 {/* Budget */}
-                <div className="rounded-lg bg-zinc-950/70 border border-zinc-800/80 p-2.5">
-                  <span className="text-[11px] text-zinc-500 block uppercase tracking-wider">Budget</span>
+                <div className="rounded-xl bg-zinc-50 border border-zinc-200/80 p-3">
+                  <span className="text-[11px] text-zinc-500 block uppercase tracking-wider font-semibold">Budget</span>
                   <div className="flex items-baseline justify-between mt-1">
-                    <span className="text-xs font-medium text-zinc-200">Valid</span>
-                    <span className="text-xs font-mono font-bold text-emerald-400">
+                    <span className="text-xs font-bold text-zinc-800">Valid</span>
+                    <span className="text-xs font-mono font-bold text-emerald-600">
                       +{derivedScore.breakdown.budget.points}
                     </span>
                   </div>
                 </div>
 
                 {/* Requirements */}
-                <div className="rounded-lg bg-zinc-950/70 border border-zinc-800/80 p-2.5">
-                  <span className="text-[11px] text-zinc-500 block uppercase tracking-wider">Clarity</span>
+                <div className="rounded-xl bg-zinc-50 border border-zinc-200/80 p-3">
+                  <span className="text-[11px] text-zinc-500 block uppercase tracking-wider font-semibold">Clarity</span>
                   <div className="flex items-baseline justify-between mt-1">
-                    <span className="text-xs font-medium text-zinc-200">{requirementClarity}</span>
-                    <span className="text-xs font-mono font-bold text-emerald-400">
+                    <span className="text-xs font-bold text-zinc-800">{requirementClarity}</span>
+                    <span className="text-xs font-mono font-bold text-emerald-600">
                       +{derivedScore.breakdown.requirements.points}
                     </span>
                   </div>
                 </div>
 
                 {/* Engagement */}
-                <div className="rounded-lg bg-zinc-950/70 border border-zinc-800/80 p-2.5 col-span-2 sm:col-span-1">
-                  <span className="text-[11px] text-zinc-500 block uppercase tracking-wider">Engagement</span>
+                <div className="rounded-xl bg-zinc-50 border border-zinc-200/80 p-3 col-span-2 sm:col-span-1">
+                  <span className="text-[11px] text-zinc-500 block uppercase tracking-wider font-semibold">Engagement</span>
                   <div className="flex items-baseline justify-between mt-1">
-                    <span className="text-xs font-medium text-zinc-200">{engagementLevel}</span>
-                    <span className="text-xs font-mono font-bold text-emerald-400">
+                    <span className="text-xs font-bold text-zinc-800">{engagementLevel}</span>
+                    <span className="text-xs font-mono font-bold text-emerald-600">
                       +{derivedScore.breakdown.engagement.points}
                     </span>
                   </div>
@@ -290,19 +290,19 @@ export default function LeadAnalysisSection({
             </div>
           )}
 
-          {/* Why this lead is prioritized (Section 8) */}
+          {/* Why this lead is prioritized */}
           {derivedScore && derivedScore.reasons.length > 0 && (
-            <div className="pt-5 mt-5 border-t border-zinc-800/80 space-y-2">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+            <div className="pt-4 border-t border-zinc-100 space-y-2">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-700">
                 Why this lead is prioritized:
               </h3>
               <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                 {derivedScore.reasons.map((reason, idx) => (
                   <li
                     key={idx}
-                    className="flex items-center gap-2 text-xs text-zinc-200 bg-zinc-950/60 px-3 py-1.5 rounded-lg border border-zinc-800/60"
+                    className="flex items-center gap-2 text-xs font-medium text-zinc-800 bg-emerald-50/60 px-3 py-2 rounded-xl border border-emerald-200/60"
                   >
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0"></span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 shrink-0"></span>
                     <span>{reason}</span>
                   </li>
                 ))}
@@ -311,75 +311,75 @@ export default function LeadAnalysisSection({
           )}
         </div>
 
-        {/* AI Analysis Cards */}
+        {/* AI Insights Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Summary */}
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-5 space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400 block">
+          <div className="bg-white rounded-2xl border border-zinc-200/80 p-6 shadow-xs space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 block">
               Lead Summary
             </span>
-            <p className="text-sm text-zinc-200 leading-relaxed">
+            <p className="text-sm text-zinc-700 leading-relaxed font-normal">
               {summary}
             </p>
           </div>
 
           {/* Customer Intent */}
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-5 space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400 block">
+          <div className="bg-white rounded-2xl border border-zinc-200/80 p-6 shadow-xs space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 block">
               Customer Intent
             </span>
-            <p className="text-sm text-zinc-200 leading-relaxed">
+            <p className="text-sm text-zinc-700 leading-relaxed font-normal">
               {intent}
             </p>
           </div>
 
           {/* Key Requirements */}
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-5 space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400 block">
+          <div className="bg-white rounded-2xl border border-zinc-200/80 p-6 shadow-xs space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 block">
               Key Requirements
             </span>
             {keyRequirements.length > 0 ? (
               <ul className="space-y-1.5">
                 {keyRequirements.map((req, idx) => (
-                  <li key={idx} className="text-sm text-zinc-300 flex items-start gap-2">
-                    <span className="text-emerald-400 mt-1">&bull;</span>
+                  <li key={idx} className="text-sm text-zinc-700 flex items-start gap-2">
+                    <span className="text-emerald-600 font-bold mt-0.5">&bull;</span>
                     <span>{req}</span>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-xs text-zinc-500 italic">None explicitly identified</p>
+              <p className="text-xs text-zinc-400 italic">None explicitly identified</p>
             )}
           </div>
 
           {/* Objections / Concerns */}
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-5 space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400 block">
+          <div className="bg-white rounded-2xl border border-zinc-200/80 p-6 shadow-xs space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 block">
               Objections / Identified Constraints
             </span>
             {objections.length > 0 ? (
               <ul className="space-y-1.5">
                 {objections.map((obj, idx) => (
-                  <li key={idx} className="text-sm text-amber-300/90 flex items-start gap-2">
-                    <span className="text-amber-400 mt-1">&bull;</span>
+                  <li key={idx} className="text-sm text-amber-800 flex items-start gap-2">
+                    <span className="text-amber-600 font-bold mt-0.5">&bull;</span>
                     <span>{obj}</span>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-xs text-zinc-500 italic">No explicit objections noted</p>
+              <p className="text-xs text-zinc-400 italic">No explicit objections noted</p>
             )}
           </div>
         </div>
 
-        {/* Action & Response Recommendations */}
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-6 space-y-4">
+        {/* Recommended Action & Suggested Response Card */}
+        <div className="bg-white rounded-2xl border border-zinc-200/80 p-6 sm:p-8 shadow-xs space-y-5">
           {/* Recommended Next Action */}
-          <div className="space-y-1.5">
-            <span className="text-xs font-semibold uppercase tracking-wider text-emerald-400 block">
+          <div className="space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 block">
               Recommended Next Action
             </span>
-            <p className="text-sm font-medium text-zinc-100 bg-zinc-950/60 p-3.5 rounded-lg border border-zinc-800/80">
+            <p className="text-sm font-semibold text-zinc-900 bg-emerald-50/50 p-4 rounded-xl border border-emerald-200/60">
               {recommendedNextAction}
             </p>
           </div>
@@ -387,22 +387,22 @@ export default function LeadAnalysisSection({
           {/* Suggested Response */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+              <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">
                 Suggested Salesperson Response
               </span>
               <button
                 type="button"
                 onClick={copyToClipboard}
-                className="text-xs text-zinc-400 hover:text-white flex items-center gap-1 font-mono transition-colors"
+                className="text-xs text-zinc-500 hover:text-zinc-900 flex items-center gap-1 font-semibold transition-colors"
               >
                 {copiedResponse ? (
-                  <span className="text-emerald-400">&check; Copied!</span>
+                  <span className="text-emerald-600 font-bold">&check; Copied!</span>
                 ) : (
                   <span>Copy Text</span>
                 )}
               </button>
             </div>
-            <div className="p-4 rounded-lg bg-zinc-950 border border-zinc-800/80 text-sm text-zinc-200 whitespace-pre-wrap leading-relaxed">
+            <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200/80 text-sm text-zinc-800 whitespace-pre-wrap leading-relaxed">
               {suggestedResponse}
             </div>
           </div>
@@ -410,14 +410,14 @@ export default function LeadAnalysisSection({
 
         {/* Footer Actions: Re-analysis & Cooldown Guard */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-zinc-400">
             Analysis is cached. Explicit re-analysis re-invokes Gemini with current lead parameters.
           </p>
           <button
             type="button"
             onClick={() => handleAnalyze(true)}
             disabled={isLoading || cooldownSeconds > 0}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed text-xs font-medium text-zinc-300 border border-zinc-700/60 transition-colors"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed text-xs font-semibold text-white shadow-xs transition-colors"
           >
             {isLoading ? (
               <span>Analyzing lead...</span>
@@ -430,7 +430,7 @@ export default function LeadAnalysisSection({
         </div>
 
         {errorMessage && (
-          <p className="text-xs text-rose-400 bg-rose-950/30 p-2.5 rounded-lg border border-rose-900/40">
+          <p className="text-xs text-rose-700 bg-rose-50 p-3 rounded-xl border border-rose-200">
             {errorMessage}
           </p>
         )}
@@ -441,18 +441,18 @@ export default function LeadAnalysisSection({
   // State: FAILED
   if (status === 'FAILED') {
     return (
-      <div className="rounded-xl border border-rose-900/60 bg-rose-950/20 p-6 space-y-4">
+      <div className="bg-white rounded-2xl border border-rose-200 p-6 space-y-4 shadow-xs">
         <div className="flex items-start gap-3">
-          <div className="h-8 w-8 rounded-lg bg-rose-900/40 border border-rose-700/50 flex items-center justify-center text-rose-400 shrink-0">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="h-9 w-9 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 shrink-0">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-rose-200">
+            <h3 className="text-sm font-bold text-rose-900">
               AI analysis temporarily unavailable.
             </h3>
-            <p className="text-xs text-rose-300/80 mt-1">
+            <p className="text-xs text-rose-700 mt-1">
               The AI service could not complete the request. Your lead record is intact and safe.
             </p>
           </div>
@@ -463,7 +463,7 @@ export default function LeadAnalysisSection({
             type="button"
             onClick={() => handleAnalyze(true)}
             disabled={isLoading || cooldownSeconds > 0}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-semibold transition-colors shadow-sm"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-semibold transition-colors shadow-xs"
           >
             {isLoading ? (
               <span>Analyzing lead...</span>
@@ -480,16 +480,16 @@ export default function LeadAnalysisSection({
 
   // State: PENDING or Unanalyzed
   return (
-    <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-6 space-y-4">
+    <div className="bg-white rounded-2xl border border-zinc-200/80 p-6 space-y-4 shadow-xs">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse"></span>
-            <span className="text-xs font-semibold uppercase tracking-wider text-amber-400">
+            <span className="h-2.5 w-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-700">
               AI analysis pending
             </span>
           </div>
-          <p className="text-xs text-zinc-400">
+          <p className="text-xs text-zinc-500">
             Run Gemini AI analysis to evaluate buyer intent, calculate sales readiness score, and generate actionable recommendations.
           </p>
         </div>
@@ -498,7 +498,7 @@ export default function LeadAnalysisSection({
           type="button"
           onClick={() => handleAnalyze(false)}
           disabled={isLoading || cooldownSeconds > 0}
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-semibold transition-colors shadow-sm shrink-0"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#C84B45] hover:bg-[#b03e39] disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-semibold transition-colors shadow-xs shrink-0"
         >
           {isLoading ? (
             <span className="flex items-center gap-2">
@@ -517,7 +517,7 @@ export default function LeadAnalysisSection({
       </div>
 
       {errorMessage && (
-        <p className="text-xs text-rose-400 bg-rose-950/30 p-2.5 rounded-lg border border-rose-900/40">
+        <p className="text-xs text-rose-700 bg-rose-50 p-3 rounded-xl border border-rose-200">
           {errorMessage}
         </p>
       )}
