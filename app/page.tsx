@@ -8,9 +8,10 @@ export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   const leads = await prisma.lead.findMany({
-    orderBy: {
-      createdAt: 'desc',
-    },
+    orderBy: [
+      { leadScore: { sort: 'desc', nulls: 'last' } },
+      { createdAt: 'desc' },
+    ],
   });
 
   return (
@@ -23,13 +24,13 @@ export default async function Home() {
               <div className="h-2.5 w-2.5 rounded bg-emerald-400"></div>
             </div>
             <span className="font-semibold text-sm tracking-tight text-white">LeadPilot AI</span>
-            <span className="text-zinc-500 text-xs font-mono">v0.2.0</span>
+            <span className="text-zinc-500 text-xs font-mono">v0.4.0</span>
           </div>
 
           <div className="flex items-center gap-3">
             <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono font-medium rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-              Phase 2: Lead Domain
+              Phase 4: Sales Priority Queue
             </span>
             <Link
               href="/leads/new"
@@ -50,7 +51,7 @@ export default async function Home() {
               <span>Real Estate Sales Command Center</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-              Inbound Leads Queue
+              Sales Priority Queue
             </h1>
             <p className="text-sm text-zinc-400 mt-1">
               &ldquo;Which lead should I act on next, why, and what should I say?&rdquo;
@@ -77,10 +78,10 @@ export default async function Home() {
         <section className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              Verified Inbound Leads
+              Ranked Inbound Leads
             </h2>
             <span className="text-xs font-mono text-zinc-500">
-              Ordered by: Newest First (createdAt DESC)
+              Ranked by: Priority Score DESC (nulls last) &bull; Newest First
             </span>
           </div>
           <LeadTable leads={leads} />

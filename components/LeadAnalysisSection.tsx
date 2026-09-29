@@ -289,6 +289,26 @@ export default function LeadAnalysisSection({
               </div>
             </div>
           )}
+
+          {/* Why this lead is prioritized (Section 8) */}
+          {derivedScore && derivedScore.reasons.length > 0 && (
+            <div className="pt-5 mt-5 border-t border-zinc-800/80 space-y-2">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+                Why this lead is prioritized:
+              </h3>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                {derivedScore.reasons.map((reason, idx) => (
+                  <li
+                    key={idx}
+                    className="flex items-center gap-2 text-xs text-zinc-200 bg-zinc-950/60 px-3 py-1.5 rounded-lg border border-zinc-800/60"
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0"></span>
+                    <span>{reason}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         {/* AI Analysis Cards */}
