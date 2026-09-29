@@ -49,6 +49,7 @@ export async function POST(request: Request, context: RouteContext) {
 
       return NextResponse.json(
         {
+          success: true,
           lead,
           breakdown: scoreResult.breakdown,
           message: 'Existing completed analysis reused.',
@@ -119,6 +120,7 @@ export async function POST(request: Request, context: RouteContext) {
 
       return NextResponse.json(
         {
+          success: true,
           lead: updatedLead,
           breakdown: scoreResult.breakdown,
         },

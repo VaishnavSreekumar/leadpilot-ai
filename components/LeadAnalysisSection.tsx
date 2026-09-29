@@ -72,6 +72,7 @@ export default function LeadAnalysisSection({
     return () => clearInterval(interval);
   }, [cooldownSeconds]);
 
+
   // Derive score breakdown deterministically at render time
   let derivedScore: ScoreResult | null = null;
   if (status === 'COMPLETED' && intentLevel && requirementClarity && engagementLevel) {
@@ -114,9 +115,9 @@ export default function LeadAnalysisSection({
         return;
       }
 
-      if (data.success && data.lead) {
+      if (data && data.lead) {
         const updated = data.lead;
-        setStatus(updated.aiAnalysisStatus);
+        setStatus(updated.aiAnalysisStatus || 'COMPLETED');
         setSummary(updated.aiSummary);
         setIntent(updated.aiIntent);
         setKeyRequirements(updated.aiKeyRequirements || []);
