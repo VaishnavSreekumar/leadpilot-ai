@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { prisma } from '@/lib/db';
 import { formatBudgetDisplay, getTimelineLabel } from '@/lib/validations/lead';
 import LeadAnalysisSection from '@/components/LeadAnalysisSection';
+import SalesAssistant from '@/components/SalesAssistant';
 
 export const dynamic = 'force-dynamic';
 
@@ -192,6 +193,22 @@ export default async function LeadDetailPage({ params }: PageProps) {
           buyingTimeline={lead.buyingTimeline}
           budgetInr={lead.budgetInr}
         />
+
+        {/* Phase 5: Grounded Sales Assistant */}
+        <section aria-label="Sales Assistant">
+          <div className="mb-3 flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-indigo-400"></span>
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+              Sales Assistant
+            </h2>
+          </div>
+          <SalesAssistant
+            leadId={lead.id}
+            leadName={lead.name}
+            leadPriority={lead.leadPriority}
+            isAnalyzed={lead.aiAnalysisStatus === 'COMPLETED'}
+          />
+        </section>
       </main>
     </div>
   );
