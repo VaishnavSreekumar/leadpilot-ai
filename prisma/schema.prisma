@@ -34,6 +34,9 @@ model Lead {
   leadScore               Int?
   leadPriority            String?
 
+  // Phase 5: Persistent chat cooldown (serverless-safe, stored in DB)
+  lastChatRequestAt       DateTime?
+
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }
