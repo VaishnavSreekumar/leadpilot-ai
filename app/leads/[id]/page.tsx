@@ -4,6 +4,8 @@ import { prisma } from '@/lib/db';
 import { formatBudgetDisplay, getTimelineLabel } from '@/lib/validations/lead';
 import LeadAnalysisSection from '@/components/LeadAnalysisSection';
 import SalesAssistant from '@/components/SalesAssistant';
+import SmartFollowUp from '@/components/SmartFollowUp';
+import { getFollowUpDays } from '@/lib/ai/follow-up';
 
 export const dynamic = 'force-dynamic';
 
@@ -207,6 +209,26 @@ export default async function LeadDetailPage({ params }: PageProps) {
             leadName={lead.name}
             leadPriority={lead.leadPriority}
             isAnalyzed={lead.aiAnalysisStatus === 'COMPLETED'}
+          />
+        </section>
+
+        {/* Phase 6: Smart Follow-Up */}
+        <section aria-label="Smart Follow-Up">
+          <SmartFollowUp
+            leadId={lead.id}
+            leadName={lead.name}
+            initialFollowUp={
+              lead.followUpGeneratedAt && lead.followUpReason
+                ? {
+                    recommendedAt: lead.followUpRecommendedAt?.toISOString() ?? null,
+                    daysFromNow: getFollowUpDays(lead.buyingTimeline, lead.leadPriority),
+                    reason: lead.followUpReason,
+                    focusPoints: lead.followUpFocusPoints ?? [],
+                    suggestedMessage: lead.followUpMessage ?? '',
+                    generatedAt: lead.followUpGeneratedAt.toISOString(),
+                  }
+                : null
+            }
           />
         </section>
       </main>

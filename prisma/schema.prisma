@@ -37,6 +37,13 @@ model Lead {
   // Phase 5: Persistent chat cooldown (serverless-safe, stored in DB)
   lastChatRequestAt       DateTime?
 
+  // Phase 6: Smart Follow-Up recommendation (latest generated, not a log)
+  followUpRecommendedAt   DateTime?
+  followUpReason          String?
+  followUpFocusPoints     String[]  @default([])
+  followUpMessage         String?
+  followUpGeneratedAt     DateTime?
+
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }
