@@ -47,9 +47,10 @@ export async function POST(request: Request) {
 export async function GET() {
   try {
     const leads = await prisma.lead.findMany({
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: [
+        { leadScore: { sort: 'desc', nulls: 'last' } },
+        { createdAt: 'desc' },
+      ],
     });
 
     return NextResponse.json({ leads }, { status: 200 });

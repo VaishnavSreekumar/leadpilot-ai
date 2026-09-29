@@ -30,10 +30,12 @@ export interface ScoreResult {
   score: number;
   priority: LeadPriority;
   breakdown: ScoreBreakdown;
+  explanation: string;
+  reasons: string[];
 }
 
 /**
- * Calculates deterministic lead score and priority based on canonical formula.
+ * Calculates deterministic lead score, priority, breakdown, and "Why this lead?" explanation.
  * Strictly deterministic - no network or AI calls.
  */
 export function calculateLeadScore(input: ScoringInput): ScoreResult {
@@ -120,6 +122,24 @@ export function calculateLeadScore(input: ScoringInput): ScoreResult {
     priority = 'COLD';
   }
 
+  // Phase 4 "Why this lead?" deterministic explanation
+  // Order: Intent, Budget, Requirement Clarity, Engagement, Timeline
+  const intentPhrase = input.intentLevel === 'HIGH' ? 'High intent' : input.intentLevel === 'MEDIUM' ? 'Medium intent' : 'Low intent';
+  const budgetPhrase = budgetPoints > 0 ? 'valid budget' : 'missing or invalid budget';
+  const reqPhrase = input.requirementClarity === 'CLEAR' ? 'clear requirements' : input.requirementClarity === 'PARTIAL' ? 'partial requirement clarity' : 'unclear requirements';
+  const engPhrase = input.engagementLevel === 'HIGH' ? 'high engagement' : input.engagementLevel === 'MEDIUM' ? 'medium engagement' : 'low engagement';
+  const timelinePhrase = input.buyingTimeline === '0-3 months' ? '0–3 month timeline' : input.buyingTimeline === '3-6 months' ? '3–6 month timeline' : input.buyingTimeline === '6-12 months' ? '6–12 month timeline' : 'exploring timeline';
+
+  const explanation = `${total}/100 ${priority} — ${intentPhrase}, ${budgetPhrase}, ${reqPhrase}, ${engPhrase}, ${timelinePhrase}.`;
+
+  const reasons = [
+    intentPhrase,
+    budgetPhrase.charAt(0).toUpperCase() + budgetPhrase.slice(1),
+    reqPhrase.charAt(0).toUpperCase() + reqPhrase.slice(1),
+    engPhrase.charAt(0).toUpperCase() + engPhrase.slice(1),
+    timelinePhrase.charAt(0).toUpperCase() + timelinePhrase.slice(1),
+  ];
+
   return {
     score: total,
     priority,
@@ -131,5 +151,18 @@ export function calculateLeadScore(input: ScoringInput): ScoreResult {
       engagement: { label: engagementLabel, points: engagementPoints, max: 15 },
       total,
     },
+    explanation,
+    reasons,
+  };
+}
+
+/**
+ * Reusable helper to obtain "Why this lead?" explanation without repeating scoring logic.
+ */
+export function getLeadExplanation(input: ScoringInput): { explanation: string; reasons: string[] } {
+  const result = calculateLeadScore(input);
+  return {
+    explanation: result.explanation,
+    reasons: result.reasons,
   };
 }
