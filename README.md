@@ -5,7 +5,7 @@
 LeadPilot AI answers one core operational question for real-estate sales agents: **"Which lead should I act on next, why, and what should I say?"**
 
 - **GitHub Repository**: [https://github.com/VaishnavSreekumar/leadpilot-ai](https://github.com/VaishnavSreekumar/leadpilot-ai)
-- **Live Demo**: [https://leadpilot-3pcy95491-vaish123-fullstcks-projects.vercel.app/](https://leadpilot-k1kt2cen1-vaish123-fullstcks-projects.vercel.app/)
+- **Live Demo**: [https://leadpilot-k1kt2cen1-vaish123-fullstcks-projects.vercel.app/](https://leadpilot-k1kt2cen1-vaish123-fullstcks-projects.vercel.app/)
 
 ---
 
@@ -405,4 +405,4 @@ The final application logic, architecture, validation, deterministic scoring rul
 
 ## Demo
 
-Demo video: _To be added before submission._
+- **Demo Video**: [https://drive.google.com/file/d/1iLnfR3pQ1cfQwr6FG5mGr3GXCiKd6p0g/view?usp=sharing](https://drive.google.com/file/d/1iLnfR3pQ1cfQwr6FG5mGr3GXCiKd6p0g/view?usp=sharing)
