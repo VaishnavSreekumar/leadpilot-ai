@@ -3,6 +3,10 @@ import { POST } from '../app/api/leads/[id]/analyze/route';
 import { prisma } from '../lib/db';
 import * as aiModule from '../lib/ai/lead-analysis';
 
+vi.mock('../lib/auth/session', () => ({
+  getCurrentUser: vi.fn().mockResolvedValue({ id: 'test-user-id', email: 'test@example.com', name: 'Test User' }),
+}));
+
 // Mock prisma and analyzeLeadWithGemini
 vi.mock('../lib/db', () => ({
   prisma: {

@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { chatRequestSchema, chatWithSalesAssistant } from '@/lib/ai/sales-assistant';
+import { getCurrentUser } from '@/lib/auth/session';
+import { checkRateLimit, createRateLimitResponse } from '@/lib/security/rate-limit';
+import { acquireLeadCooldown, releaseLeadCooldown } from '@/lib/reliability/cooldown';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,10 +16,30 @@ interface RouteContext {
 
 export async function POST(request: Request, context: RouteContext) {
   try {
+    // 1. Authentication check
+    const user = await getCurrentUser(request);
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Authentication required. Please sign in.' },
+        { status: 401 }
+      );
+    }
+
     const { id } = await context.params;
 
     if (!id || typeof id !== 'string') {
       return NextResponse.json({ error: 'Valid Lead ID is required' }, { status: 400 });
+    }
+
+    // 2. Server-side Rate Limiting (30 chat requests / 60s per user)
+    const rateLimit = await checkRateLimit({
+      key: `user:${user.id}:chat`,
+      maxRequests: 30,
+      windowSeconds: 60,
+    });
+
+    if (!rateLimit.success) {
+      return createRateLimitResponse(rateLimit, 'Rate limit exceeded for sales assistant chat. Please wait.');
     }
 
     // --- Parse and validate request body ---
@@ -54,29 +77,25 @@ export async function POST(request: Request, context: RouteContext) {
       return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
     }
 
-    // --- Persistent serverless-safe cooldown check ---
-    // lastChatRequestAt is stored in the DB, so it persists across serverless invocations.
-    if (lead.lastChatRequestAt) {
-      const msSinceLast = Date.now() - new Date(lead.lastChatRequestAt).getTime();
-      if (msSinceLast < CHAT_COOLDOWN_MS) {
-        const cooldownRemaining = Math.ceil((CHAT_COOLDOWN_MS - msSinceLast) / 1000);
-        return NextResponse.json(
-          {
-            error: `Please wait ${cooldownRemaining} second${cooldownRemaining !== 1 ? 's' : ''} before sending another message.`,
-            cooldownRemaining,
-          },
-          { status: 429 }
-        );
-      }
+    // 3. Cross-user IDOR protection
+    if (lead.userId && lead.userId !== user.id) {
+      return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
     }
 
-    // --- Persist the timestamp BEFORE calling Gemini ---
-    // This limits rapid sequential requests. A single check+write has a theoretical race window
-    // if two requests arrive truly simultaneously, but prevents normal repeated clicking.
-    await prisma.lead.update({
-      where: { id },
-      data: { lastChatRequestAt: new Date() },
-    });
+    // --- Persistent serverless-safe atomic cooldown check ---
+    // Guaranteed atomic in PostgreSQL via conditional row update
+    const previousChatRequestAt = lead.lastChatRequestAt;
+    const cooldownLock = await acquireLeadCooldown(id, 'lastChatRequestAt', CHAT_COOLDOWN_MS);
+    if (!cooldownLock.acquired) {
+      const cooldownRemaining = cooldownLock.cooldownRemaining ?? 5;
+      return NextResponse.json(
+        {
+          error: `Please wait ${cooldownRemaining} second${cooldownRemaining !== 1 ? 's' : ''} before sending another message.`,
+          cooldownRemaining,
+        },
+        { status: 429 }
+      );
+    }
 
     // --- Call Gemini (failure MUST NOT mutate lead AI analysis or scoring fields) ---
     try {
@@ -115,9 +134,11 @@ export async function POST(request: Request, context: RouteContext) {
         { status: 200 }
       );
     } catch (chatError) {
-      // Controlled failure — does NOT modify aiSummary, aiIntent, leadScore, leadPriority, etc.
       const errMessage = chatError instanceof Error ? chatError.message : 'AI chat failed';
       console.error('[Sales Assistant Chat Error]:', errMessage);
+
+      // Release cooldown using CAS so users are not blocked on provider failures
+      await releaseLeadCooldown(id, 'lastChatRequestAt', cooldownLock.acquiredAt, previousChatRequestAt);
 
       return NextResponse.json(
         {

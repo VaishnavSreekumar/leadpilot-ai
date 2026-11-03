@@ -6,6 +6,9 @@ import {
   getFollowUpDate,
   getFollowUpDays,
 } from '@/lib/ai/follow-up';
+import { getCurrentUser } from '@/lib/auth/session';
+import { checkRateLimit, createRateLimitResponse } from '@/lib/security/rate-limit';
+import { acquireLeadCooldown, releaseLeadCooldown } from '@/lib/reliability/cooldown';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,10 +21,42 @@ interface RouteContext {
 
 export async function POST(request: Request, context: RouteContext) {
   try {
+    // 1. Authentication check
+    const user = await getCurrentUser(request);
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Authentication required. Please sign in.' },
+        { status: 401 }
+      );
+    }
+
     const { id } = await context.params;
 
     if (!id || typeof id !== 'string') {
       return NextResponse.json({ error: 'Valid Lead ID is required' }, { status: 400 });
+    }
+
+    // 2. Server-side Rate Limiting (20 follow-up requests / 60s per user)
+    const rateLimit = await checkRateLimit({
+      key: `user:${user.id}:follow_up`,
+      maxRequests: 20,
+      windowSeconds: 60,
+    });
+
+    if (!rateLimit.success) {
+      return createRateLimitResponse(rateLimit, 'Rate limit exceeded for smart follow-up generation. Please wait.');
+    }
+
+    // --- Retrieve authoritative lead from DB ---
+    const lead = await prisma.lead.findUnique({ where: { id } });
+
+    if (!lead) {
+      return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
+    }
+
+    // 3. Cross-user IDOR protection
+    if (lead.userId && lead.userId !== user.id) {
+      return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
     }
 
     // --- Parse and validate request body ---
@@ -43,13 +78,6 @@ export async function POST(request: Request, context: RouteContext) {
     }
 
     const { force } = validation.data;
-
-    // --- Retrieve authoritative lead from DB ---
-    const lead = await prisma.lead.findUnique({ where: { id } });
-
-    if (!lead) {
-      return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
-    }
 
     // --- Calculate deterministic follow-up timing (application logic, not AI) ---
     const followUpDays = getFollowUpDays(lead.buyingTimeline, lead.leadPriority);
@@ -74,10 +102,12 @@ export async function POST(request: Request, context: RouteContext) {
 
     // --- Regeneration cooldown (serverless-safe: DB-backed) ---
     // Prevent rapid re-generation hammering the Gemini API.
+    // Atomic regeneration cooldown (serverless-safe: PostgreSQL conditional update)
+    let followUpLockAcquiredAt: Date | undefined;
     if (force && lead.followUpGeneratedAt) {
-      const msSinceLastGen = Date.now() - new Date(lead.followUpGeneratedAt).getTime();
-      if (msSinceLastGen < FOLLOW_UP_REGEN_COOLDOWN_MS) {
-        const secondsRemaining = Math.ceil((FOLLOW_UP_REGEN_COOLDOWN_MS - msSinceLastGen) / 1000);
+      const cooldownLock = await acquireLeadCooldown(id, 'followUpGeneratedAt', FOLLOW_UP_REGEN_COOLDOWN_MS);
+      if (!cooldownLock.acquired) {
+        const secondsRemaining = cooldownLock.cooldownRemaining ?? 30;
         return NextResponse.json(
           {
             error: `Please wait ${secondsRemaining} second${secondsRemaining !== 1 ? 's' : ''} before regenerating.`,
@@ -86,6 +116,7 @@ export async function POST(request: Request, context: RouteContext) {
           { status: 429 }
         );
       }
+      followUpLockAcquiredAt = cooldownLock.acquiredAt;
     }
 
     // --- Call Gemini (failure MUST NOT mutate AI analysis or scoring fields) ---
@@ -154,7 +185,13 @@ export async function POST(request: Request, context: RouteContext) {
         },
       });
     } catch (aiError) {
-      // AI failed — preserve any previous valid recommendation.
+      // AI failed — preserve any previous valid recommendation and release cooldown via CAS
+      await releaseLeadCooldown(
+        id,
+        'followUpGeneratedAt',
+        followUpLockAcquiredAt,
+        previousRecommendation?.followUpGeneratedAt ?? null
+      );
       const errMessage = aiError instanceof Error ? aiError.message : 'AI generation failed';
       console.error('[Smart Follow-Up Generation Error]:', errMessage);
 
