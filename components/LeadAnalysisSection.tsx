@@ -64,6 +64,7 @@ export default function LeadAnalysisSection({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [cooldownSeconds, setCooldownSeconds] = useState<number>(0);
   const [copiedResponse, setCopiedResponse] = useState<boolean>(false);
+  const [correlationId, setCorrelationId] = useState<string | null>(null);
 
   // 10-second cooldown timer
   useEffect(() => {
@@ -132,6 +133,9 @@ export default function LeadAnalysisSection({
         setScore(updated.leadScore);
         setPriority(updated.leadPriority);
         setAnalyzedAt(updated.aiAnalyzedAt);
+        if (data.correlationId) {
+          setCorrelationId(data.correlationId);
+        }
         setCooldownSeconds(10); // Start 10s cooldown
         onAnalysisComplete?.(updated);
         router.refresh();
@@ -193,6 +197,11 @@ export default function LeadAnalysisSection({
                 {formattedAnalyzedDate && (
                   <span className="text-xs font-mono text-zinc-400">
                     &bull; Analyzed {formattedAnalyzedDate}
+                  </span>
+                )}
+                {correlationId && (
+                  <span className="text-[10px] font-mono font-medium text-zinc-500 bg-zinc-100 px-2 py-0.5 rounded border border-zinc-200" title={`Trace Correlation ID: ${correlationId}`}>
+                    Trace: {correlationId.slice(0, 8)}…
                   </span>
                 )}
               </div>

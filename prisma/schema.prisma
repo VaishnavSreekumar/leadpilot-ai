@@ -17,6 +17,7 @@ model User {
   updatedAt    DateTime  @updatedAt
   sessions     Session[]
   leads        Lead[]
+  aiExecutionLogs AiExecutionLog[]
 }
 
 model Session {
@@ -82,7 +83,49 @@ model Lead {
 
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+  aiExecutionLogs     AiExecutionLog[]
 
   @@index([userId])
 }
+
+model AiExecutionLog {
+  id                      String    @id @default(cuid())
+  correlationId           String    @unique
+  leadId                  String
+  lead                    Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  userId                  String?
+  user                    User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  model                   String
+  promptVersion           String
+  status                  String    // "SUCCESS" | "FAILED"
+  latencyMs               Int
+  attempts                Int       @default(1)
+  retryCount              Int       @default(0)
+  errorType               String?   // "VALIDATION_ERROR" | "PROVIDER_ERROR" | "TIMEOUT_ERROR" | "INTERNAL_ERROR"
+  errorMessage            String?   // Sanitized error message (no secrets, tokens, or PII)
+
+  // Quality metrics
+  intentLevel             String?   // Extracted intentLevel: HIGH, MEDIUM, LOW
+  engagementLevel         String?   // Extracted engagementLevel: HIGH, MEDIUM, LOW
+  requirementClarity      String?   // Extracted requirementClarity: CLEAR, PARTIAL, UNCLEAR
+  uncertainFields         String[]  @default([])
+  keyRequirementsCount    Int       @default(0)
+  objectionsCount         Int       @default(0)
+  suggestedQuestionsCount Int       @default(0)
+
+  // Token usage (from provider response usageMetadata if available)
+  promptTokens            Int?
+  responseTokens          Int?
+  totalTokens             Int?
+
+  createdAt               DateTime  @default(now())
+
+  @@index([leadId, createdAt])
+  @@index([userId])
+  @@index([correlationId])
+  @@index([status])
+  @@index([errorType])
+  @@index([createdAt])
+}
+
 
