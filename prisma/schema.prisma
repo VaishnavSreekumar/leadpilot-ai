@@ -103,6 +103,7 @@ model AiExecutionLog {
   retryCount              Int       @default(0)
   errorType               String?   // "VALIDATION_ERROR" | "PROVIDER_ERROR" | "TIMEOUT_ERROR" | "INTERNAL_ERROR"
   errorMessage            String?   // Sanitized error message (no secrets, tokens, or PII)
+  retryOfCorrelationId    String?   // Trace linkage to previous failed execution if retried
 
   // Quality metrics
   intentLevel             String?   // Extracted intentLevel: HIGH, MEDIUM, LOW
@@ -123,9 +124,9 @@ model AiExecutionLog {
   @@index([leadId, createdAt])
   @@index([userId])
   @@index([correlationId])
+  @@index([retryOfCorrelationId])
   @@index([status])
   @@index([errorType])
   @@index([createdAt])
 }
-
 
