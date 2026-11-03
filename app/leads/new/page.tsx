@@ -1,12 +1,20 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { getCurrentUser } from '@/lib/auth/session';
 import LeadForm from '@/components/LeadForm';
+import UserNav from '@/components/UserNav';
 
 export const metadata = {
   title: 'New Lead Intake — LeadPilot AI',
   description: 'Intake and persist an inbound real estate sales lead into the database.',
 };
 
-export default function NewLeadPage() {
+export default async function NewLeadPage() {
+  const user = await getCurrentUser();
+  if (!user) {
+    redirect('/login?next=/leads/new');
+  }
+
   return (
     <div className="min-h-screen bg-[#F1E4DC] text-zinc-900 flex flex-col font-sans">
       {/* Top Header */}
@@ -24,9 +32,12 @@ export default function NewLeadPage() {
             <span className="font-bold text-sm tracking-tight text-zinc-900">Lead Intake</span>
           </div>
 
-          <span className="text-xs font-mono font-semibold px-3.5 py-1 rounded-full bg-zinc-100 border border-zinc-200/80 text-zinc-600">
-            Intake Record
-          </span>
+          <div className="flex items-center gap-4">
+            <UserNav user={user} />
+            <span className="text-xs font-mono font-semibold px-3.5 py-1 rounded-full bg-zinc-100 border border-zinc-200/80 text-zinc-600">
+              Intake Record
+            </span>
+          </div>
         </div>
       </header>
 

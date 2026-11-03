@@ -1,28 +1,47 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
+import { getCurrentUser } from '@/lib/auth/session';
+import { assertLeadAccess } from '@/lib/auth/authorize';
+import { checkRateLimit, createRateLimitResponse } from '@/lib/security/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await getCurrentUser(request);
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Authentication required. Please sign in.' },
+        { status: 401 }
+      );
+    }
+
     const { id } = await params;
 
     if (!id || typeof id !== 'string') {
       return NextResponse.json({ error: 'Lead ID is required' }, { status: 400 });
     }
 
-    const lead = await prisma.lead.findUnique({
-      where: { id },
+    // Rate limiting
+    const rateLimit = await checkRateLimit({
+      key: `user:${user.id}:get_lead_detail`,
+      maxRequests: 60,
+      windowSeconds: 60,
     });
 
-    if (!lead) {
-      return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
+    if (!rateLimit.success) {
+      return createRateLimitResponse(rateLimit);
     }
 
-    return NextResponse.json({ lead }, { status: 200 });
+    // Authorize & prevent IDOR
+    const access = await assertLeadAccess(id, user.id);
+    if (!access.authorized) {
+      return NextResponse.json({ error: access.error }, { status: access.status });
+    }
+
+    return NextResponse.json({ lead: access.lead }, { status: 200 });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Database query failed';
     console.error('[GET /api/leads/[id] Error]:', message);

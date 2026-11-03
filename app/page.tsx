@@ -1,11 +1,25 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db';
+import { getCurrentUser } from '@/lib/auth/session';
 import LeadTable from '@/components/LeadTable';
+import UserNav from '@/components/UserNav';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
+  const user = await getCurrentUser();
+  if (!user) {
+    redirect('/login');
+  }
+
   const leads = await prisma.lead.findMany({
+    where: {
+      OR: [
+        { userId: user.id },
+        { userId: null },
+      ],
+    },
     orderBy: [
       { leadScore: { sort: 'desc', nulls: 'last' } },
       { createdAt: 'desc' },
@@ -30,9 +44,14 @@ export default async function Home() {
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="text-xs font-mono text-zinc-500 font-semibold hidden md:inline">
-              Real Estate Sales Intelligence
-            </span>
+            <Link
+              href="/ops"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-zinc-200/80 bg-white hover:bg-zinc-50 text-xs font-bold text-zinc-700 transition-colors shadow-2xs"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+              <span>Ops &amp; AI Quality</span>
+            </Link>
+            <UserNav user={user} />
             <Link
               href="/leads/new"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#C84B45] hover:bg-[#B33F3A] text-white text-xs font-bold transition-all shadow-sm active:scale-95"
@@ -110,5 +129,3 @@ export default async function Home() {
     </div>
   );
 }
-
-

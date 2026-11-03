@@ -1,8 +1,11 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { prisma } from '@/lib/db';
+import { getCurrentUser } from '@/lib/auth/session';
+import { assertLeadAccess } from '@/lib/auth/authorize';
 import { formatBudgetDisplay, getTimelineLabel } from '@/lib/validations/lead';
 import LeadAnalysisWorkspace from '@/components/LeadAnalysisWorkspace';
+import UserNav from '@/components/UserNav';
 import { getFollowUpDays } from '@/lib/ai/follow-up';
 
 export const dynamic = 'force-dynamic';
@@ -30,13 +33,17 @@ export async function generateMetadata({ params }: PageProps) {
 export default async function LeadDetailPage({ params }: PageProps) {
   const { id } = await params;
 
-  const lead = await prisma.lead.findUnique({
-    where: { id },
-  });
+  const user = await getCurrentUser();
+  if (!user) {
+    redirect(`/login?next=/leads/${id}`);
+  }
 
-  if (!lead) {
+  const access = await assertLeadAccess(id, user.id);
+  if (!access.authorized) {
     notFound();
   }
+
+  const lead = access.lead;
 
   const createdDate = new Date(lead.createdAt).toLocaleString('en-IN', {
     day: 'numeric',
@@ -74,9 +81,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="text-xs font-mono text-zinc-500 font-semibold hidden md:inline">
-              Lead Record #{lead.id}
-            </span>
+            <UserNav user={user} />
             <Link
               href="/leads/new"
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#C84B45] hover:bg-[#B33F3A] text-xs font-bold text-white shadow-sm transition-all active:scale-95"
